@@ -15,6 +15,9 @@ export default class Stoplight extends Phaser.GameObjects.Container {
 		eventHub.$on('stopSignAdjust',()=>{if(this.scene.config.ticker == "ETH"){this.y = toRes(100) ;}})
 		eventHub.$on('stopSignAdjustwithBridge',()=>{if(this.scene.config.ticker == "ETH"){this.y = this.scene.busStop - toRes(130); }})
 
+		eventHub.$on('stopSignAdjust',()=>{if(this.scene.config.ticker == "BTC"){this.y = toRes(100) ;}})
+		eventHub.$on('stopSignAdjustwithBridge',()=>{if(this.scene.config.ticker == "BTC"){this.y = this.scene.busStop - toRes(100); }})
+
 		eventHub.$on('stopSignAdjust',()=>{if(this.scene.config.ticker == "SOLANA"){this.y = toRes(100) }})
 		eventHub.$on('stopSignAdjustwithBridge',()=>{if(this.scene.config.ticker == "SOLANA"){this.y = this.scene.busStop - toRes(100); }})
 		console.log("**TRAFFICLIGHT***",this.y)

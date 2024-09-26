@@ -134,6 +134,7 @@ export class StreetController extends Phaser.Scene {
 		if (streetsToLoad.length > 1) {
 			let isETH = false;
 			let isSOLANA = false;
+			let isBTC = false;
 
 				let leftStreet = this.getSideStreet("left");
 				let rightStreet = this.getSideStreet("right");
@@ -153,6 +154,14 @@ export class StreetController extends Phaser.Scene {
 			if (rightStreet.ticker == availableStreets.SOLANA.config.ticker){
 				availableStreets.SOLANA.prototype.setSide("right");
 			}
+
+			if (leftStreet.ticker == availableStreets.BTC.config.ticker){
+				availableStreets.BTC.prototype.setSide("left");
+			}
+	
+			if (rightStreet.ticker == availableStreets.BTC.config.ticker){
+				availableStreets.BTC.prototype.setSide("right");
+			}
 	
 
 			if (streetsToLoad[0].street.config.ticker == availableStreets.ETH.config.ticker || streetsToLoad[1].street.config.ticker == availableStreets.ETH.config.ticker ){
@@ -162,6 +171,10 @@ export class StreetController extends Phaser.Scene {
 			if (streetsToLoad[0].street.config.ticker == availableStreets.SOLANA.config.ticker || streetsToLoad[1].street.config.ticker == availableStreets.SOLANA.config.ticker ){
 				isSOLANA = true;
 			}
+
+			if (streetsToLoad[0].street.config.ticker == availableStreets.BTC.config.ticker || streetsToLoad[1].street.config.ticker == availableStreets.BTC.config.ticker ){
+				isBTC= true;
+			}
 			if (isETH && isSOLANA){
 
 				eventHub.$emit("BridgeAdjust");
@@ -170,10 +183,19 @@ export class StreetController extends Phaser.Scene {
 
 				availableStreets.SOLANA.prototype.setBusStop(1500);
 				availableStreets.SOLANA.prototype.adjustMyView(true);
-			}else{
+			}else if(isBTC && isSOLANA){
+				eventHub.$emit("BridgeAdjust");
+				availableStreets.BTC.prototype.setBusStop(1500);
+				availableStreets.BTC.prototype.adjustMyView(true);
+
+				availableStreets.SOLANA.prototype.setBusStop(1500);
+				availableStreets.SOLANA.prototype.adjustMyView(true);
+			}
+			else{
 
 				availableStreets.ETH.prototype.setBusStop(230);
 				availableStreets.SOLANA.prototype.setBusStop(200);
+				availableStreets.BTC.prototype.setBusStop(200);
 			
 			}
 			
@@ -185,7 +207,16 @@ export class StreetController extends Phaser.Scene {
 				this.bridgeIsOn = true;
 				this.bridgeSwitch = 1;
 				this.housePosAdj = 1500;
-				// console.log("Bridge created");
+			
+				
+			}
+
+			if (isBTC && isSOLANA){
+				this.createBridge();
+				this.bridgeIsOn = true;
+				this.bridgeSwitch = 1;
+				this.housePosAdj = 1500;
+			
 				
 			}
 		} else {
@@ -409,19 +440,94 @@ export class StreetController extends Phaser.Scene {
 					} 
 				else{
 				
-						availableStreets.ETH.prototype.setAdjustCrowdPos(false);
-						availableStreets.ETH.prototype.setBusStop(230);
+						// availableStreets.ETH.prototype.setAdjustCrowdPos(false);
+						// availableStreets.ETH.prototype.setBusStop(230);
 					
-						availableStreets.SOLANA.prototype.setBusStop(200);
-						availableStreets.ETH.prototype.adjustMyView(false);
-						availableStreets.SOLANA.prototype.adjustMyView(false);
-						eventHub.$emit("stopSignAdjust");
+						// availableStreets.SOLANA.prototype.setBusStop(200);
+						// availableStreets.ETH.prototype.adjustMyView(false);
+						// availableStreets.SOLANA.prototype.adjustMyView(false);
+						// eventHub.$emit("stopSignAdjust");
 						
 		
-						this.bridgeSwitch = 0;
-						this.housePosAdj = 0;
-						this.bridgeIsOn = false;
-						console.log("sidenotchanged")
+						// this.bridgeSwitch = 0;
+						// this.housePosAdj = 0;
+						// this.bridgeIsOn = false;
+						// console.log("sidenotchanged")
+	
+				}
+	
+	
+		}
+
+		checkBTCSOLANAonSwitch(){
+	
+			let isBTC = false;
+			let isSOLANA = false;
+			let leftStreet = this.getSideStreet("left");
+			let rightStreet = this.getSideStreet("right");
+	
+			console.log("***LEFT****",leftStreet.ticker);
+			console.log("***RIGHT****",rightStreet.ticker);
+	
+			if (leftStreet.ticker == availableStreets.BTC.config.ticker){
+				availableStreets.BTC.prototype.setSide("left");
+			}
+	
+			if (rightStreet.ticker == availableStreets.BTC.config.ticker){
+				availableStreets.BTC.prototype.setSide("right");
+			}
+	
+			if (leftStreet.ticker == availableStreets.SOLANA.config.ticker){
+				availableStreets.SOLANA.prototype.setSide("left");
+			}
+	
+			if (rightStreet.ticker == availableStreets.SOLANA.config.ticker){
+				availableStreets.SOLANA.prototype.setSide("right");
+			}
+	
+	
+	
+			if (leftStreet.ticker == availableStreets.BTC.config.ticker || rightStreet.ticker == availableStreets.BTC.config.ticker ){
+				isBTC = true;
+			}
+	
+			if (leftStreet.ticker == availableStreets.SOLANA.config.ticker || rightStreet.ticker == availableStreets.SOLANA.config.ticker ){
+				isSOLANA = true;
+			}
+			if (isBTC && isSOLANA)
+				{
+					
+					availableStreets.BTC.prototype.setBusStop(1500);
+					availableStreets.BTC.prototype.adjustMyView(true);
+	
+					availableStreets.SOLANA.prototype.setBusStop(1500);
+					availableStreets.SOLANA.prototype.adjustMyView(true);
+	
+							availableStreets.BTC.prototype.setAdjustCrowdPos(true);
+							eventHub.$emit("stopSignAdjustwithBridge");
+	
+					this.createBridge();
+					this.bridgeIsOn = true;
+					this.bridgeSwitch = 1;
+					this.housePosAdj = 1500;
+					console.log("sidechanged")
+				
+					} 
+				else{
+				
+						// availableStreets.BTC.prototype.setAdjustCrowdPos(false);
+						// availableStreets.BTC.prototype.setBusStop(200);
+					
+						// availableStreets.SOLANA.prototype.setBusStop(200);
+						// availableStreets.BTC.prototype.adjustMyView(false);
+						// availableStreets.SOLANA.prototype.adjustMyView(false);
+						// eventHub.$emit("stopSignAdjust");
+						
+		
+						// this.bridgeSwitch = 0;
+						// this.housePosAdj = 0;
+						// this.bridgeIsOn = false;
+						// console.log("sidenotchanged")
 	
 				}
 	
@@ -458,6 +564,7 @@ export class StreetController extends Phaser.Scene {
 				}
 			}
 			this.checkETHSOLANAonSwitch();
+			this.checkBTCSOLANAonSwitch();
 			this.changeSelectedCoins();
 
 			this.positionHouses(true);
