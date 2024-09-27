@@ -997,7 +997,7 @@ export class Street extends Phaser.Scene {
 		}
 
 		this.stoplight = new Stoplight(this);
-		if(this.ticker == "SOLANA" && this.side == "right"){this.stoplightTwo = new Stoplight(this); this.stoplightTwo.setMyXpos(883);this.stoplightTwo.flipMyStopLight(true);this.stoplightTwo.adjustMyLightPosX(128)}
+		if(this.ticker == "SOLANA" && this.side == "right"){this.stoplightTwo = new Stoplight(this); this.stoplightTwo.setMyXpos(883);this.stoplightTwo.flipMyStopLight(true);this.stoplightTwo.adjustMyLightPosX()}
 		this.sign = new Sign(this);
 		this.sign.alternateStats();
 	}

@@ -91,10 +91,12 @@ export default class Stoplight extends Phaser.GameObjects.Container {
 		this.pole.setFlipX(mybool);
 	}
     
-	adjustMyLightPosX(pos){
-		this.redLight.x = this.redLight.x - toRes(pos);
-		this.yellowLight.x = this.yellowLight.x - toRes(pos);
-		this.greenLight.x = this.greenLight.x - toRes(pos);
+	adjustMyLightPosX(){
+		this.redLight.x =  -this.pole.width/1.3;
+		this.yellowLight.x = -this.pole.width/1.3;
+		this.greenLight.x = -this.pole.width/1.3;
+
+		console.log(this.redLight.x)
 	}
 	
 }
