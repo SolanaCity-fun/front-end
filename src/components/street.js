@@ -864,16 +864,16 @@ export class Street extends Phaser.Scene {
 				this.pathSpriteTwo.setScale(config.resolution);
 
 				this.pathSpriteThree = this.add.tileSprite(
-					this.side == "right" ? toRes(650) : toRes(this.noHousesArea ? 0 : 256),
-					0,
-					this.noHousesArea ? 768 : 180,
-					window.innerHeight-this.busStop,
+					this.side == "right" ? toRes(200) : toRes(this.noHousesArea ? 0 : 256),
+					(window.innerHeight-this.busStop)/5000,
+					this.noHousesArea ? 768 : 580,
+					window.innerHeight ,
 					getSheetKey("road.png"),
 					"road.png"
 				);
 	
-					this.pathSpriteThree.scrollFactorY = 0;
-					this.pathSpriteThree.setOrigin(0, 1);
+					this.pathSpriteThree.scrollFactorY = 1;
+					this.pathSpriteThree.setOrigin(0, toRes(0.28));
 					this.pathSpriteThree.setScale(config.resolution);
 
 
@@ -1801,7 +1801,7 @@ export class Street extends Phaser.Scene {
 		newHeight = toResRev(newHeight);
 		this.pathSprite.height = newHeight;
 		if(this.pathSpriteTwo)this.pathSpriteTwo.height = newHeight;
-		if(this.pathSpriteThree)this.pathSpriteThree.height = newHeight;
+		if(this.pathSpriteThree)this.pathSpriteThree.height = newHeight+toRes(1000);
 		this.laneSprite.height = newHeight;
 		if(this.laneSpriteTwo)this.laneSpriteTwo.height = newHeight;
 		this.curbSprite.height = newHeight;
