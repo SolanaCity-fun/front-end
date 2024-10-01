@@ -1625,8 +1625,8 @@ export const LUKSO = {
 //#ffe599
 export const CELO = {
 	ticker: "CELO",
-	coinName: "CELO",
-	color: "ffe599",
+	coinName: "SOLANA",
+	color: "000000",
 	busColor: "ffe599",
 	busCapacity: 0,
 	feeVar: "gp",
@@ -2764,7 +2764,7 @@ export const commonTitleOverrides = {
 
 export const enabledConfig = {
 	ETH,
-	SOLANA,
+	// SOLANA,
 	BTC,
 	DASH,
 	// BCH,
@@ -2772,8 +2772,8 @@ export const enabledConfig = {
 	// LTC,
 	//ARBI,
 	// MANTA,
-	// CELO,
-	// LUKSO,
+	CELO,
+	LUKSO,
 };
 
 export const additionalSheets = {
