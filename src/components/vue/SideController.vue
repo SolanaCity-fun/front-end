@@ -237,7 +237,7 @@ export default Vue.extend({
 		now: function () {
 			//now will change every second
 			//set recent block timeago
-			if (this.blockchainLength > 0) {
+			if (this.blockchainLength > 0 && this.coinConfig.ticker !== "SOLANA") {
 				let recentBlock = this.coinConfig.liveBlocks[this.coinConfig.liveBlocks.length - 1];
 				let recentBlockTime = recentBlock.time;
 				let recent = fds(recentBlockTime * 1000, new Date(), {

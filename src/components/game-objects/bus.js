@@ -431,6 +431,7 @@ Bus.prototype.getAge = function () {
 };
 
 Bus.prototype.leave = function (block) {
+	console.log(block)
 	this.setData("leaving", true);
 	let peopleBoarding = false;
 	for (let i = 0; i < this.scene.people.children.entries.length; i++) {
@@ -585,9 +586,7 @@ Bus.prototype.leaveTween = function () {
 				}
 			},
 		});
-
 	}
-	
 };
 
 Bus.prototype.moveToStop = function (duration = 1400) {
