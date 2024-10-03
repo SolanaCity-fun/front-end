@@ -573,7 +573,6 @@ console.log(this.mySide)
 
 	//go through list
 	sortBuses(instant = false, hashArray = false) {
-		console.log("sfjslkjf;lkasjfklja")
 		if (!hashArray) hashArray = this.sortedLineHashes(false);
 		for (let i = 0; i < hashArray.length; i++) {
 			hashArray[i].txData.dependingOn = false;

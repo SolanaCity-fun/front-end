@@ -437,7 +437,7 @@ export default class SOLANAStreet extends Street {
 	}
 
 	//go through list
-	sortBuses(instant = false, hashArray = false) {/*
+	sortBuses(instant = false, hashArray = false) {
 		if (!hashArray) hashArray = this.sortedLineHashes(false);
 		for (let i = 0; i < hashArray.length; i++) {
 			hashArray[i].txData.dependingOn = false;
@@ -559,7 +559,7 @@ export default class SOLANAStreet extends Street {
 		this.updateAllBusPercent(activeBuses);
 
 		this.vue.sortedCount++;
-		this.busInside(); */
+		this.busInside(); 
 	}
 
 	calcBusHeight(/*size*/) {

@@ -2,61 +2,213 @@ import { enabledConfig } from "./config";
 import { joinRoom, loadBlock } from "./utils/";
 import EventEmitter from "events";
 
+const solanaBlocks = [
+    {
+        "baseFee": 13457093422,
+        "busCapacity": 40000000,
+        "coin": "SOL",
+        "gl": 40000000,
+        "gu": 30050400,
+        "hash": "5fjw3YbCHxzKfuHYqY5hbLQTw7ZT4p1UxofzTZ2XfgrZ",
+        "height": 15872345,
+        "hoursPast": 0,
+        "inserted": 1727881500,
+        "minerTime": 1727881498,
+        "parentHash": "4fG4eQywHWb7ZZRR8MQWnxHVNwfS3iPRFTE3fJFWuXHZ",
+        "processed": true,
+        "size": 126475,
+        "time": 1727881500,
+        "txs": 240,
+        "uncle": false,
+        "verbose": false
+    },
+    {
+        "baseFee": 12189012456,
+        "busCapacity": 50000000,
+        "coin": "SOL",
+        "gl": 50000000,
+        "gu": 40560000,
+        "hash": "3Eo21uJ5MLmg2jpUV6aZdHrjh5FMZTHmTpTczZFN4g5G",
+        "height": 15875012,
+        "hoursPast": 0,
+        "inserted": 1727882600,
+        "minerTime": 1727882598,
+        "parentHash": "9PfLk7LRJgV7Yhz8p5GGHfJF9r7gHpZJfWnKLbXrQvST",
+        "processed": true,
+        "size": 116732,
+        "time": 1727882600,
+        "txs": 195,
+        "uncle": false,
+        "verbose": false
+    },
+    {
+        "baseFee": 14750923219,
+        "busCapacity": 60000000,
+        "coin": "SOL",
+        "gl": 60000000,
+        "gu": 51200950,
+        "hash": "AfwB19XbTfZQrBxjsSykWf2Rpy6e6tVhLqyxV7Sk82Jr",
+        "height": 15876018,
+        "hoursPast": 0,
+        "inserted": 1727883100,
+        "minerTime": 1727883098,
+        "parentHash": "6K2LpMVET6Gw8eqRctTXsFWUJwFZh9xHkfFgXePyzCZ5",
+        "processed": true,
+        "size": 152500,
+        "time": 1727883100,
+        "txs": 320,
+        "uncle": false,
+        "verbose": false
+    },
+    {
+        "baseFee": 13045672189,
+        "busCapacity": 55000000,
+        "coin": "SOL",
+        "gl": 55000000,
+        "gu": 45000950,
+        "hash": "72XL9Gkhs5sCrvHYUEAhPtyMLD5syHf7nJXhQKXfFNNp",
+        "height": 15878001,
+        "hoursPast": 0,
+        "inserted": 1727883800,
+        "minerTime": 1727883798,
+        "parentHash": "3FLNUE7MvLCXcUBTpKj7KZLz8K1PhcTpA2oGrxt2ChzR",
+        "processed": true,
+        "size": 123350,
+        "time": 1727883800,
+        "txs": 250,
+        "uncle": false,
+        "verbose": false
+    },
+    {
+        "baseFee": 11508791233,
+        "busCapacity": 48000000,
+        "coin": "SOL",
+        "gl": 48000000,
+        "gu": 37500300,
+        "hash": "5Pjcv1kALXzAEHR2xjUUL1B4FaPBoNJe2GZqzVVc5HYF",
+        "height": 15879021,
+        "hoursPast": 0,
+        "inserted": 1727884200,
+        "minerTime": 1727884198,
+        "parentHash": "8M7DZXhxbh7p7ZPMxyvUXBzjqDyNTX7hNFy4qjKw5rDv",
+        "processed": true,
+        "size": 143700,
+        "time": 1727884200,
+        "txs": 275,
+        "uncle": false,
+        "verbose": false
+    }
+]
+
+
 class blockFactory extends EventEmitter {
 	constructor(ticker) {
-		super();
-		this.connected = false;
-		this.config = enabledConfig[ticker];
-		this.blockchain = this.config.liveBlocks;
-		this.blocksWaiting = {};
-	}
+        super();
+        this.connected = false;
+        this.config = enabledConfig[ticker];
+        this.blockchain = this.config.liveBlocks;
+        this.blocksWaiting = {};
+        this.ticker = ticker;
+        console.log(`blockFactory created for ${ticker}`);
+    }
 
-	connect() {
-		this.socket = joinRoom(this.config, "blocks");
-		if (this.connected) {
-			this.emit("connected");
-			return;
-		}
-		this.connected = true;
-		this.socket.once("latestblocks", async hashes => {
-			if (hashes.length) {
-				let blocks = hashes;
-				if (typeof hashes[0] === "string") {
-					let tasks = [];
-					hashes.forEach(hash => {
-						tasks.push(fetch(`${process.env.VUE_APP_REST_API}/static/blocks/${this.config.ticker}/${hash}?verbose=false`));
-					});
-					let responses;
-					try {
-						responses = await Promise.all(tasks);
-					} catch (err) {
-						console.log(err);
-						this.emit("error", err);
-						return;
-					}
-					blocks = await Promise.all(responses.map(async res => res.json()));
-				}
+    connect() {
+        console.log(`Attempting to connect for ${this.ticker}`);
+        
+        if (this.ticker === 'SOLANA') {
+            this.handleSolanaData();
+        } else {
+            this.socket = joinRoom(this.config, "blocks");
+            console.log(`Socket created for ${this.ticker}:`, this.socket);
 
-				blocks.sort((a, b) => b.height - a.height);
+            if (this.connected) {
+                console.log(`Already connected for ${this.ticker}`);
+                this.emit("connected");
+                return;
+            }
 
-				for (let i = blocks.length - 1; i >= 0; i--) {
-					let block = blocks[i];
-					this.addBlock(block, false, true, true);
-				}				
-			}
+            this.connected = true;
+            this.socket.once("latestblocks", async hashes => {
+                console.log(`Received latestblocks for ${this.ticker}:`, hashes);
+                if (hashes.length) {
+                    let blocks = hashes;
+                    if (typeof hashes[0] === "string") {
+                        let tasks = [];
+                        hashes.forEach(hash => {
+                            tasks.push(fetch(`${process.env.VUE_APP_REST_API}/static/blocks/${this.ticker}/${hash}?verbose=false`));
+                        });
+                        let responses;
+                        try {
+                            responses = await Promise.all(tasks);
+                        } catch (err) {
+                            console.error(`Error fetching blocks for ${this.ticker}:`, err);
+                            this.emit("error", err);
+                            return;
+                        }					
+                        blocks = await Promise.all(responses.map(async res => res.json()));	
+                    }
+                    console.log(`Processed blocks for ${this.ticker}:`, blocks);
 
-			this.emit("connected");
-		});
+                    blocks.sort((a, b) => b.height - a.height);
+                    for (let i = blocks.length - 1; i >= 0; i--) {
+                        let block = blocks[i];
+                        this.addBlock(block, false, true, true);
+                    }
+                }
 
-		this.socket.on("block", async (hash) => {
-			if (typeof hash === "string") {
-				this.getBlock(hash);
-			}
-			else {
-				this.addBlock(hash);
-			}
-		});
-	}
+                this.emit("connected");
+            });
+
+            this.socket.on("block", async (hash) => {
+                console.log(`Received new block for ${this.ticker}:`, hash);
+                if (typeof hash === "string") {
+                    this.getBlock(hash);
+                } else {
+                    this.addBlock(hash);
+                }
+            });
+
+            this.socket.on("connect", () => {
+                console.log(`WebSocket connected for ${this.ticker}`);
+            });
+
+            this.socket.on("disconnect", (reason) => {
+                console.log(`WebSocket disconnected for ${this.ticker}. Reason:`, reason);
+            });
+
+            this.socket.on("error", (error) => {
+                console.error(`WebSocket error for ${this.ticker}:`, error);
+            });
+        }
+    }
+
+    handleSolanaData() {
+        console.log('Processing SOLANA data');
+        solanaBlocks.forEach(block => {
+            this.addBlock(block, false, true, true);
+        });
+        this.emit("connected");
+        
+        // Simulate receiving new blocks every 10 seconds
+        setInterval(() => {
+            const newBlock = this.generateSolanaBlock();
+            console.log('Received new SOLANA block:', newBlock);
+            this.addBlock(newBlock);
+        }, 10000);
+    }
+
+    generateSolanaBlock() {
+        const lastBlock = this.blockchain[this.blockchain.length - 1];
+        return {
+            ...solanaBlocks[0],
+            height: lastBlock ? lastBlock.height + 1 : 15879022,
+            hash: 'SOL' + Math.random().toString(36).substring(2, 15),
+            parentHash: lastBlock ? lastBlock.hash : solanaBlocks[solanaBlocks.length - 1].hash,
+            time: Math.floor(Date.now() / 1000),
+            minerTime: Math.floor(Date.now() / 1000) - 2,
+            inserted: Math.floor(Date.now() / 1000),
+        };
+    }
 
 	checkMissingBlocks() {
 		if (!this.blockchain.length) return;
@@ -106,9 +258,10 @@ class blockFactory extends EventEmitter {
 	}
 
 	addBlock(data, sendNotification = true, processed = false, ignoreHeight = false) {
+        console.log(`Adding block for ${this.ticker}:`, data);
 		if (this.hashExistsInBlockchain(data.hash)) return false;
 		if (!data) return false;
-
+		
 		if (this.blockchain.length && !ignoreHeight && !this.config.isRollup) {
 			const highestBlocks = this.highestBlocks();
 			if (data.height <= highestBlocks[0].height) {
@@ -154,7 +307,7 @@ class blockFactory extends EventEmitter {
 			let howMany = 0;
 			for (let i = 0; i < this.blockchain.length; i++) {
 				const block = this.blockchain[i];
-				if (!block.processed && window.txStreetPhaser) {
+				if (!block.processed && window.txPhaser) {
 					this.emit("fastProcessBlock", block);
 					break;
 				}
@@ -227,9 +380,19 @@ class blockFactory extends EventEmitter {
 	}
 }
 
+const manualTickers = ['ETH', 'SOLANA'];
+
 const blockFactories = {};
-for (const ticker in enabledConfig) {
-	blockFactories[ticker] = new blockFactory(ticker);
-}
+manualTickers.forEach(ticker => {
+    if (enabledConfig[ticker]) {
+        console.log(`Creating blockFactory for ${ticker}`);
+        blockFactories[ticker] = new blockFactory(ticker);
+        blockFactories[ticker].connect();
+    } else {
+        console.error(`Configuration for ${ticker} not found in enabledConfig`);
+    }
+});
+
+console.log('Created blockFactories:', Object.keys(blockFactories));
 
 export default blockFactories;
