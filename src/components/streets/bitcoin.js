@@ -320,6 +320,9 @@ export default class BTCStreet extends Street {
 		let bus = array[1];
 
 		bus.loadedAlt += entry.txData.rs;
+		// console.log('beingSorted');
+		// console.log(this.lineManager[entry.txData.tx])
+		eventHub.$emit("myTestPersonData",{myPersonData:this.lineManager[entry.txData.tx]});
 	}
 }
 

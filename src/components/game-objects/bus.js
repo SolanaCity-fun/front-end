@@ -39,7 +39,8 @@ const Bus = new Phaser.Class({
 
 		this.busHeight = this.scene.calcBusHeight(this.scene.config.busCapacityVisual || this.scene.config.busCapacity);
 		if (this.busHeight < 1) this.busHeight = 1;
-
+		//temp data for initiating bridge buses 
+		if(this.scene.config.ticker == "BTC")this.hasBridgeTransaction = true; this.bridgTxs = [{address:"9XAxYSXhUP1nqa6PZ2BbCNVRfNaRtMERMce4Fe6o2GfZ",amount:"0.005zBTC",transactionHash:"2CNWcxoiuW9vUZSWWse4iRbkaTmUq8roLfjoU72a2b2VyYDGUY3pt4pnuCWht8gLbutrkvXGUf5twmNWmEuExrE5",type:"Deposit",completionTime:400}]; this.onSide = this.scene.mySide; this.myBridgeStop = toRes(800);
 		//sprites
 		if(this.scene.config.ticker == "ETH"){
 				this.busTopSprite = this.scene.add.image(5, -97, "btop").setScale(1.8);
@@ -472,6 +473,7 @@ Bus.prototype.leaveTween = function () {
 	duration *= window.txStreetPhaser.streetController.fpsTimesFaster;
 
 	let doOnUpdate = true;
+
 	if (this.hasBridgeTransaction) {
         console.log(this.bridgTxs);
 		this.movingTween = this.scene.add.tween({
