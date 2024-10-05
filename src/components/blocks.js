@@ -109,11 +109,12 @@ class blockFactory extends EventEmitter {
 		this.blocksWaiting = {};
 		this.ticker = ticker;
 		this.lastBlockTime = null;
+		this.lastSolanaBlock = null;
 	}
 
 	connect() {
 		if (this.ticker === "SOLANA") {
-			this.handleSolanaData();
+			this.initializeSolanaBlocks();
 		} else {
 			this.socket = joinRoom(this.config, "blocks");
 			console.log(`Socket created for ${this.ticker}:`, this.socket);
@@ -183,28 +184,44 @@ class blockFactory extends EventEmitter {
 		}
 	}
 
-	handleSolanaData() {
-		console.log("Processing initial SOLANA data");
-		solanaBlocks.forEach((block) => {
-			this.addBlock(block, false, true, true); // Ensure blocks are added instantly
+	initializeSolanaBlocks() {
+		console.log("Initializing SOLANA blocks");
+		const now = Date.now();
+
+		// Add initial blocks synchronously
+		solanaBlocks.forEach((block, index) => {
+			const adjustedBlock = {
+				...block,
+				time: Math.floor((now - (5000 - index * 1000)) / 1000),
+				inserted: Math.floor((now - (5000 - index * 1000)) / 1000),
+				minerTime: Math.floor((now - (5000 - index * 1000)) / 1000) - 1,
+			};
+			this.addBlock(adjustedBlock, false, true, true);
 		});
+
+		this.lastBlockTime = now;
+		this.lastSolanaBlock = solanaBlocks[solanaBlocks.length - 1];
+
+		// Emit 'connected' event immediately after adding initial blocks
 		this.emit("connected");
-		this.generateSolanaBlocks(); // Start generating new blocks after adding initial ones
+
+		// Start generating new blocks in the next event loop
+		setImmediate(() => this.startGeneratingSolanaBlocks());
 	}
 
-	generateSolanaBlocks() {
-		const generateBlock = () => {
-			const newBlock = this.generateSolanaBlock();
-			this.addBlock(newBlock); // Add new block instantly
-			this.lastSolanaBlock = newBlock;
+	startGeneratingSolanaBlocks() {
+		console.log("Starting to generate new SOLANA blocks");
+		this.generateNextSolanaBlock();
+	}
 
-			// Schedule the next block generation
-			const delay = Math.floor(Math.random() * 1000) + 1000; // Random delay between 1-2 seconds
-			setTimeout(generateBlock, delay);
-		};
+	generateNextSolanaBlock() {
+		const newBlock = this.generateSolanaBlock();
+		this.addBlock(newBlock);
+		this.lastSolanaBlock = newBlock;
 
-		// Start the block generation process
-		generateBlock(); // Call immediately to start showing blocks
+		// Schedule next block generation
+		const delay = Math.floor(Math.random() * 1000) + 1000; // Random delay between 1-2 seconds
+		setTimeout(() => this.generateNextSolanaBlock(), delay);
 	}
 
 	generateSolanaBlock() {
@@ -232,7 +249,7 @@ class blockFactory extends EventEmitter {
 			txs: 150 + Math.floor(Math.random() * 200),
 			uncle: false,
 			verbose: false,
-			timeSinceLastBlock, // Add this field to track time between blocks
+			timeSinceLastBlock,
 		};
 	}
 

@@ -815,22 +815,7 @@ export class Street extends Phaser.Scene {
 		this.customCallback("processBlock", "after", data);
 	}
 
-	solanaBusLeave() {
-		const bus = this.buses.getFirstAlive(); // Get the first active Solana bus
-		if (bus) {
-			console.log("Solana bus leaving", bus);
-			bus.leave(); // Trigger bus to leave automatically
-		}
-	}
-
 	fillBusesAndLeave(block, statusOnly = false) {
-		if (this.ticker === "SOLANA") {
-			// Skip filling process for Solana and ensure bus leaves
-			this.solanaBusLeave();
-			return true;
-		}
-
-		// Original logic for other tickers
 		let blockBus = this.getBusFromId(block.height);
 		if (!blockBus) return false;
 		blockBus.loaded = typeof block.size === "undefined" || !block.size ? 0 : block.size;
@@ -838,8 +823,13 @@ export class Street extends Phaser.Scene {
 		if (statusOnly) {
 			blockBus.setData("leaving", true);
 			let sizeInMB = +(block.size / 1000000).toFixed(3) + " MB";
+			// if(typeof this.setConfText === "function"){
+			// 	this.setConfText(block, blockBus);
+			// }
+			// else{
 			blockBus.text2.setText(sizeInMB);
 			blockBus.text3.setText("");
+			// }
 		} else {
 			blockBus.leave(block);
 		}
@@ -1479,17 +1469,6 @@ export class Street extends Phaser.Scene {
 		});
 		this.busFloors = this.add.group();
 		this.buses.setDepth(this.topDepth);
-
-		if (this.ticker === "SOLANA") {
-			this.time.addEvent({
-				// delay: 2000,
-				callback: () => {
-					this.solanaBusLeave();
-				},
-				callbackScope: this,
-				loop: true,
-			});
-		}
 	}
 
 	switchBuses(oldSide, newSide) {
