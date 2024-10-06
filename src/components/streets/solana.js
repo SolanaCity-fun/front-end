@@ -1,4 +1,5 @@
 import { Street } from "../street.js";
+import Phaser from "phaser";
 // import { toRes, ethNewTxSetDepending } from "../utils/";
 // import { mirrorX, toRes, ethNewTxSetDepending, getSheetKey } from "../utils/";
 import { toRes, ethNewTxSetDepending } from "../utils/";
@@ -6,12 +7,14 @@ import { SOLANA, ethUnits } from "../config.js";
 import i18n from "../../i18n";
 import eventHub from "../vue/eventHub.js";
 import state from "../../wallet";
+import solBus from "../game-objects/solBus.js";
 // import Popup from "../game-objects/popup";
 
 export default class SOLANAStreet extends Street {
 	constructor(side) {
 		super(SOLANA, side);
 		this.mySide = side;
+		this.myBuses = [];
 	}
 
 	init() {
@@ -21,6 +24,9 @@ export default class SOLANAStreet extends Street {
 		this.busDoorFromTop = toRes(42);
 		this.personPixelsPerSecond = 5;
 		this.bridgeTx = [];
+		this.busCount = 294758986; // Start bus number
+		this.mysolbcount = 0;
+
 		this.decelerationArea = 500;
 		this.sceneHeight = toRes(10000);
 		let walkingLaneOffset = 10 * this.tileSize;
@@ -96,6 +102,16 @@ export default class SOLANAStreet extends Street {
 		this.addressNonces = this.config.addressNonces;
 		if(this.adjustView){this.cameras.main.scrollY =toRes(1300);}
 		this.streetCreate();
+		//this.mySolBus = new solBus(this,"294758986","5 Gwei","+0 wei");
+        // this.busTimer = this.time.addEvent({
+        //     delay: 1000, // 1 second interval between myBuses
+        //     callback: this.spawnBus,
+        //     callbackScope: this,
+        //     loop: true
+        // });
+		setInterval(() => {
+			if(this.myBuses)this.spawnBus();
+		}, 500);
 		if(this.adjustView){this.checkSideAddSign(this.mySide);}
 		// await console.log("this.streetCreate()", this.streetCreate());
 		this.vue.navigation.unshift({
@@ -141,6 +157,61 @@ export default class SOLANAStreet extends Street {
 		})
 		if (state.address) this.followAddress(state.address);
 	}
+
+	spawnBus(){
+		let busNumber = this.busCount++;
+        let randomGwei = Phaser.Math.Between(0, 10); // Random Gwei value between 0 and 10
+        let gweiString = `${randomGwei} Gwei`;
+
+        // Create the bus using your existing solBus class
+        let bus = new solBus(this, busNumber.toString(), gweiString, "+0 wei",false);
+
+		let busTwo = new solBus(this, busNumber.toString(), gweiString, "+0 wei",true);
+        
+        // Add the bus to an array or group to keep track of them
+        this.myBuses.push(bus);
+		this.myBuses.push(busTwo);
+		this.mysolbcount++;
+		bus.y = bus.y + (this.mysolbcount*200);
+		busTwo.y = busTwo.y + (this.mysolbcount*300);
+        // Position the bus and animate its movement upwards
+       // bus.container.setPosition(400, 600); // Set the initial position (adjust as needed)
+        
+
+            this.add.tween({
+                targets: bus,
+                y: -500, // Move the bus off-screen
+				ease: "Linear",
+				delay:1500 + (this.mysolbcount*100),
+                duration: 35000+ (this.mysolbcount*100), // Adjust as needed for speed
+                onComplete: () => {
+                    // Remove bus from array and destroy container after moving off-screen
+                   //this.myBuses[i].destroy(); 
+                    this.myBuses.splice(0, 1); // Remove the bus from the array
+                }
+            });
+
+			this.add.tween({
+                targets: busTwo,
+                y: -500, // Move the bus off-screen
+				ease: "Linear",
+				delay:1500 + (this.mysolbcount*100),
+                duration: 35000+ (this.mysolbcount*100), // Adjust as needed for speed
+                onComplete: () => {
+                    // Remove bus from array and destroy container after moving off-screen
+                   //this.myBuses[i].destroy(); 
+                    this.myBuses.splice(0, 1); // Remove the bus from the array
+                }
+            });
+        
+        
+
+        // Log the bus details for debugging
+       // console.log(`Bus ${busNumber}, ${gweiString}`);
+    
+
+	}
+
 	setBusStop(stop){
 		this.busStop = toRes(stop);
 	}
