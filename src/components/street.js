@@ -17,13 +17,13 @@ import median from "./utils/median";
 import Person from "./game-objects/person.js";
 import Bus from "./game-objects/bus.js";
 import Sign from "./game-objects/sign.js";
+import Avatar from "./game-objects/avatar.js";
 import Stoplight from "./game-objects/stoplight.js";
 import sideCtor from "./vue/SideController.vue";
 import { fds, default as i18n } from "../i18n";
 import Notification from "./vue/toasts/Notification";
-import AppleTest from './utils/apple_test.js';
+import AppleTest from "./utils/apple_test.js";
 import eventHub from "./vue/eventHub.js";
-
 
 //Main street class which all streets inherit from (e.g. btc, eth, etc)
 export class Street extends Phaser.Scene {
@@ -84,7 +84,12 @@ export class Street extends Phaser.Scene {
 		this._isABadApple();
 		this.postFxPlugin = this._getRightFxPlugin();
 	}
-
+	createAvatar() {
+		console.log("##########notcreatedAvatar");
+		this.Avatar = new Avatar(this, this.side, 250, 300, "person-19.png");
+		this.Avatar.setupControls(this);
+		console.log("##########createdAvatar");
+	}
 	_getRightFxPlugin() {
 		if (this._isABadApple()) {
 			return {
@@ -840,7 +845,7 @@ export class Street extends Phaser.Scene {
 	drawStreet() {
 		this.cameras.main.setBackgroundColor(this.backgroundColor);
 
-		if (this.ticker == "SOLANA"){
+		if (this.ticker == "SOLANA") {
 			this.pathSprite = this.add.tileSprite(
 				this.side == "right" ? toRes(192) : toRes(this.noHousesArea ? 0 : 256),
 				0,
@@ -859,27 +864,23 @@ export class Street extends Phaser.Scene {
 				"road.png"
 			);
 
-				this.pathSpriteTwo.scrollFactorY = 0;
-				this.pathSpriteTwo.setOrigin(0, 0);
-				this.pathSpriteTwo.setScale(config.resolution);
+			this.pathSpriteTwo.scrollFactorY = 0;
+			this.pathSpriteTwo.setOrigin(0, 0);
+			this.pathSpriteTwo.setScale(config.resolution);
 
-				this.pathSpriteThree = this.add.tileSprite(
-					this.side == "right" ? toRes(200) : toRes(this.noHousesArea ? 0 : 256),
-					(window.innerHeight-this.busStop)/5000,
-					this.noHousesArea ? 768 : 580,
-					window.innerHeight ,
-					getSheetKey("road.png"),
-					"road.png"
-				);
-	
-					this.pathSpriteThree.scrollFactorY = 1;
-					this.pathSpriteThree.setOrigin(0, toRes(0.28));
-					this.pathSpriteThree.setScale(config.resolution);
+			this.pathSpriteThree = this.add.tileSprite(
+				this.side == "right" ? toRes(200) : toRes(this.noHousesArea ? 0 : 256),
+				(window.innerHeight - this.busStop) / 5000,
+				this.noHousesArea ? 768 : 580,
+				window.innerHeight,
+				getSheetKey("road.png"),
+				"road.png"
+			);
 
-
-
-		}
-		else{
+			this.pathSpriteThree.scrollFactorY = 1;
+			this.pathSpriteThree.setOrigin(0, toRes(0.28));
+			this.pathSpriteThree.setScale(config.resolution);
+		} else {
 			this.pathSprite = this.add.tileSprite(
 				this.side == "right" ? toRes(192) : toRes(this.noHousesArea ? 0 : 256),
 				0,
@@ -889,7 +890,7 @@ export class Street extends Phaser.Scene {
 				"road.png"
 			);
 		}
-		
+
 		// if(this.side == "right") this.pathSprite.setTilePosition(32, 0);
 		this.pathSprite.scrollFactorY = 0;
 		this.pathSprite.setOrigin(0, 0);
@@ -907,7 +908,7 @@ export class Street extends Phaser.Scene {
 		this.laneSprite.setOrigin(0.5, 0);
 		this.laneSprite.setScale(config.resolution);
 
-		if(this.ticker == "SOLANA"){
+		if (this.ticker == "SOLANA") {
 			this.laneSpriteTwo = this.add.tileSprite(
 				this.busLane + toRes(800),
 				0,
@@ -919,7 +920,6 @@ export class Street extends Phaser.Scene {
 			this.laneSpriteTwo.scrollFactorY = 0;
 			this.laneSpriteTwo.setOrigin(0.5, 0);
 			this.laneSpriteTwo.setScale(config.resolution);
-
 		}
 		// this.laneSprite.setFlipX(this.side === "right");
 
@@ -935,7 +935,7 @@ export class Street extends Phaser.Scene {
 		this.curbSprite.setOrigin(0.5, 0);
 		this.curbSprite.setScale(config.resolution);
 
-		if(this.ticker == "SOLANA"){
+		if (this.ticker == "SOLANA") {
 			this.curbSpriteTwo = this.add.tileSprite(
 				this.busLane + (this.side === "right" ? toRes(664) : -toRes(99)),
 				0,
@@ -947,12 +947,10 @@ export class Street extends Phaser.Scene {
 			this.curbSpriteTwo.scrollFactorY = 0;
 			this.curbSpriteTwo.setOrigin(0.5, 0);
 			this.curbSpriteTwo.setScale(config.resolution);
-
 		}
 
 		if (!this.noHousesArea) {
-
-			if(this.ticker == "SOLANA"){
+			if (this.ticker == "SOLANA") {
 				this.houseCurb = this.add.tileSprite(
 					mirrorX(667, this.side),
 					0,
@@ -966,7 +964,6 @@ export class Street extends Phaser.Scene {
 				this.houseCurb.setOrigin(0.5, 0);
 				this.houseCurb.setScale(config.resolution);
 
-
 				this.houseCurbTwo = this.add.tileSprite(
 					mirrorX(477, this.side),
 					0,
@@ -979,7 +976,7 @@ export class Street extends Phaser.Scene {
 				this.houseCurbTwo.scrollFactorY = 0;
 				this.houseCurbTwo.setOrigin(0.5, 0);
 				this.houseCurbTwo.setScale(config.resolution);
-			}else{
+			} else {
 				this.houseCurb = this.add.tileSprite(
 					mirrorX(256, this.side),
 					0,
@@ -993,11 +990,15 @@ export class Street extends Phaser.Scene {
 				this.houseCurb.setOrigin(0.5, 0);
 				this.houseCurb.setScale(config.resolution);
 			}
-			
 		}
 
 		this.stoplight = new Stoplight(this);
-		if(this.ticker == "SOLANA" && this.side == "right"){this.stoplightTwo = new Stoplight(this); this.stoplightTwo.setMyXpos(883);this.stoplightTwo.flipMyStopLight(true);this.stoplightTwo.adjustMyLightPosX()}
+		if (this.ticker == "SOLANA" && this.side == "right") {
+			this.stoplightTwo = new Stoplight(this);
+			this.stoplightTwo.setMyXpos(883);
+			this.stoplightTwo.flipMyStopLight(true);
+			this.stoplightTwo.adjustMyLightPosX();
+		}
 		this.sign = new Sign(this);
 		this.sign.alternateStats();
 	}
@@ -1360,10 +1361,12 @@ export class Street extends Phaser.Scene {
 		this.generateLine(this.lineLength);
 		if (oldSide != side) {
 			this.pathSprite.x = this.side == "right" ? toRes(192) : toRes(this.noHousesArea ? 0 : 256);
-			if(this.pathSpriteTwo)this.pathSpriteTwo.x = this.side == "right" ? toRes(500) : toRes(this.noHousesArea ? 0 : 256);
-			if(this.pathSpriteThree)this.pathSpriteThree.x = this.side == "right" ? toRes(650) : toRes(this.noHousesArea ? 0 : 256);
+			if (this.pathSpriteTwo)
+				this.pathSpriteTwo.x = this.side == "right" ? toRes(500) : toRes(this.noHousesArea ? 0 : 256);
+			if (this.pathSpriteThree)
+				this.pathSpriteThree.x = this.side == "right" ? toRes(650) : toRes(this.noHousesArea ? 0 : 256);
 			this.laneSprite.x = this.busLane;
-			if(this.laneSpriteTwo)this.laneSpriteTwo.x = this.busLane+toRes(500);
+			if (this.laneSpriteTwo) this.laneSpriteTwo.x = this.busLane + toRes(500);
 			this.curbSprite.x = this.busLane + (this.side === "right" ? toRes(99) : -toRes(99));
 			if (this.crowd) {
 				this.crowd.x = this.side === "right" ? this.curbX : this.curbX - toRes(372);
@@ -1800,13 +1803,18 @@ export class Street extends Phaser.Scene {
 
 		newHeight = toResRev(newHeight);
 		this.pathSprite.height = newHeight;
-		if(this.pathSpriteTwo)this.pathSpriteTwo.height = newHeight;
-		if(this.pathSpriteThree)this.pathSpriteThree.height = newHeight+toRes(1000);
+		if (this.pathSpriteTwo) this.pathSpriteTwo.height = newHeight;
+		if (this.pathSpriteThree) this.pathSpriteThree.height = newHeight + toRes(1000);
 		this.laneSprite.height = newHeight;
-		if(this.laneSpriteTwo)this.laneSpriteTwo.height = newHeight;
+		if (this.laneSpriteTwo) this.laneSpriteTwo.height = newHeight;
 		this.curbSprite.height = newHeight;
-		if(this.curbSpriteTwo)this.curbSpriteTwo.height = newHeight;
-		if (!this.noHousesArea){ this.houseCurb.height = newHeight; if(this.houseCurbTwo){this.houseCurbTwo.height = newHeight;}}
+		if (this.curbSpriteTwo) this.curbSpriteTwo.height = newHeight;
+		if (!this.noHousesArea) {
+			this.houseCurb.height = newHeight;
+			if (this.houseCurbTwo) {
+				this.houseCurbTwo.height = newHeight;
+			}
+		}
 	}
 
 	scrollY(amount, reset = false) {
@@ -1858,18 +1866,18 @@ export class Street extends Phaser.Scene {
 			reset ? amount : this.pathSprite.tilePositionY + amount
 		);
 
-		if(this.pathSpriteTwo){
+		if (this.pathSpriteTwo) {
 			this.pathSpriteTwo.setTilePosition(
-			this.pathSpriteTwo.tilePositionX,
-			reset ? amount : this.pathSpriteTwo.tilePositionY + amount
-		);
+				this.pathSpriteTwo.tilePositionX,
+				reset ? amount : this.pathSpriteTwo.tilePositionY + amount
+			);
 		}
 
-		if(this.pathSpriteThree){
+		if (this.pathSpriteThree) {
 			this.pathSpriteThree.setTilePosition(
-			this.pathSpriteThree.tilePositionX,
-			reset ? amount : this.pathSpriteThree.tilePositionY + amount
-		);
+				this.pathSpriteThree.tilePositionX,
+				reset ? amount : this.pathSpriteThree.tilePositionY + amount
+			);
 		}
 
 		this.curbSprite.setTilePosition(
@@ -1877,23 +1885,23 @@ export class Street extends Phaser.Scene {
 			reset ? amount : this.curbSprite.tilePositionY + amount
 		);
 
-		if(this.curbSpriteTwo){
+		if (this.curbSpriteTwo) {
 			this.curbSpriteTwo.setTilePosition(
 				this.curbSpriteTwo.tilePositionX,
 				reset ? amount : this.curbSpriteTwo.tilePositionY + amount
 			);
-
 		}
 		if (config.theme.scrollHouseCurb && !this.noHousesArea) {
 			this.houseCurb.setTilePosition(
 				this.houseCurb.tilePositionX,
 				reset ? amount : this.houseCurb.tilePositionY + amount
 			);
-           if(this.houseCurbTwo){
-			this.houseCurbTwo.setTilePosition(
-				this.houseCurbTwo.tilePositionX,
-				reset ? amount : this.houseCurbTwo.tilePositionY + amount
-			);}
+			if (this.houseCurbTwo) {
+				this.houseCurbTwo.setTilePosition(
+					this.houseCurbTwo.tilePositionX,
+					reset ? amount : this.houseCurbTwo.tilePositionY + amount
+				);
+			}
 		}
 		if (config.theme.scrollLane) {
 			this.laneSprite.setTilePosition(
@@ -1901,7 +1909,7 @@ export class Street extends Phaser.Scene {
 				reset ? amount : this.laneSprite.tilePositionY + amount
 			);
 
-			if(this.laneSpriteTwo){
+			if (this.laneSpriteTwo) {
 				this.laneSpriteTwo.setTilePosition(
 					this.laneSpriteTwo.tilePositionX,
 					reset ? amount : this.laneSpriteTwo.tilePositionY + amount
@@ -2813,36 +2821,35 @@ export class Street extends Phaser.Scene {
 	positionHouse(houseObj, houseY) {
 		if (!this.lowestHouseY || houseY > this.lowestHouseY) this.lowestHouseY = houseY;
 
-        let houseX;
+		let houseX;
 		let flipHouse;
-        if(this.ticker == "SOLANA"){
-		houseX = toRes(62);
-		houseY = toRes(houseY);
-		flipHouse = false;
-		if (this.side == "right") flipHouse = true;
-		if (houseObj.side == 1) {
-			houseX = toRes(this.side == "right" ? 760 : 200);
+		if (this.ticker == "SOLANA") {
+			houseX = toRes(62);
+			houseY = toRes(houseY);
+			flipHouse = false;
+			if (this.side == "right") flipHouse = true;
+			if (houseObj.side == 1) {
+				houseX = toRes(this.side == "right" ? 760 : 200);
+			} else {
+				houseX = toRes(this.side == "right" ? 398 : 62);
+			}
+			if (houseObj.type === "mall") {
+				houseX = toRes(this.side == "right" ? 873 : 87);
+			}
 		} else {
-			houseX = toRes(this.side == "right" ? 398 : 62);
+			houseX = toRes(62);
+			houseY = toRes(houseY);
+			flipHouse = false;
+			if (this.side == "right") flipHouse = true;
+			if (houseObj.side == 1) {
+				houseX = toRes(this.side == "right" ? 760 : 200);
+			} else {
+				houseX = toRes(this.side == "right" ? 898 : 62);
+			}
+			if (houseObj.type === "mall") {
+				houseX = toRes(this.side == "right" ? 873 : 87);
+			}
 		}
-		if (houseObj.type === "mall") {
-			houseX = toRes(this.side == "right" ? 873 : 87);
-		}
-		}else{
-
-		houseX = toRes(62);
-		houseY = toRes(houseY);
-		flipHouse = false;
-		if (this.side == "right") flipHouse = true;
-		if (houseObj.side == 1) {
-			houseX = toRes(this.side == "right" ? 760 : 200);
-		} else {
-			houseX = toRes(this.side == "right" ? 898 : 62);
-		}
-		if (houseObj.type === "mall") {
-			houseX = toRes(this.side == "right" ? 873 : 87);
-		}
-        }
 		//set door position
 		for (let i = 0; i < this.doors.children.entries.length; i++) {
 			let door = this.doors.children.entries[i];

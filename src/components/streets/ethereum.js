@@ -1,24 +1,20 @@
 import { Street } from "../street.js";
 import Phaser from "phaser";
 // import { toRes, ethNewTxSetDepending } from "../utils/";
-import { toRes, ethNewTxSetDepending,getSheetKey } from "../utils/";
+import { toRes, ethNewTxSetDepending, getSheetKey } from "../utils/";
 import { ETH, ethUnits } from "../config.js";
 import i18n from "../../i18n";
 import eventHub from "../vue/eventHub.js";
 import state from "../../wallet";
 import Bus from "../game-objects/bus.js";
 
-
 export default class ETHStreet extends Street {
 	constructor(side) {
 		super(ETH, side);
-		this.mySide = side
+		this.mySide = side;
 	}
 
 	init() {
-	
-		
-		
 		this.myDummyData;
 		//this.adjustView = false;
 		this.foundBoarding = false;
@@ -100,13 +96,20 @@ export default class ETHStreet extends Street {
 
 	async create() {
 		super.create();
-console.log(this.mySide)
+		console.log(this.mySide);
 		this.addressNonces = this.config.addressNonces;
-		if(this.adjustView){this.cameras.main.scrollY =toRes(1300);}
-		if(this.resetView){	this.cameras.main.scrollY =-toRes(1300)}
+		if (this.adjustView) {
+			this.cameras.main.scrollY = toRes(1300);
+		}
+		if (this.resetView) {
+			this.cameras.main.scrollY = -toRes(1300);
+		}
 		this.streetCreate();
 		this.createEtherPeopleAnims();
-		if(this.adjustView){this.checkSideAddSign(this.mySide);}
+		// this.createAvatar();
+		if (this.adjustView) {
+			this.checkSideAddSign(this.mySide);
+		}
 		this.vue.navigation.unshift({
 			key: "characters",
 			html: "<span class='fas fa-user-astronaut'></span>",
@@ -137,133 +140,136 @@ console.log(this.mySide)
 			(this.vue.sizeTitle = () => {
 				return i18n.t(this.ticker.toLowerCase() + ".sizeTitle");
 			}),
- 
-		this.ethBuses();
+			this.ethBuses();
 		this.createPeople();
 		eventHub.$on(this.ticker + "-follow", (address) => {
 			this.followAddress(address);
 		});
 
-		eventHub.$on("EthBridgeTx",(bridgeTxData)=>{
+		eventHub.$on("EthBridgeTx", (bridgeTxData) => {
 			this.addBridgeTx(bridgeTxData);
-		})
-		eventHub.$on("scrollToBridge",()=>{this.scrollToBridge()});
-		eventHub.$on("createMyStaticSearch",()=>{this.createStaticSearch()});
-		eventHub.$on("stopSignAdjustwithBridge",()=>{this.adjustBusHeight = true;this.checkSideAddSign(this.mysetSide);})
-		eventHub.$on("stopSignAdjust",()=>{	if(this.myBridgeRoadSign){this.myBridgeRoadSign.destroy();}})
+		});
+		eventHub.$on("scrollToBridge", () => {
+			this.scrollToBridge();
+		});
+		eventHub.$on("createMyStaticSearch", () => {
+			this.createStaticSearch();
+		});
+		eventHub.$on("stopSignAdjustwithBridge", () => {
+			this.adjustBusHeight = true;
+			this.checkSideAddSign(this.mysetSide);
+		});
+		eventHub.$on("stopSignAdjust", () => {
+			if (this.myBridgeRoadSign) {
+				this.myBridgeRoadSign.destroy();
+			}
+		});
 		if (state.address) this.followAddress(state.address);
 		this.createIsabella();
-	
 	}
-	
-	setBusStop(stop){
+
+	setBusStop(stop) {
 		this.busStop = toRes(stop);
 	}
 
-	adjustMyView(mybool){
-     this.adjustView = mybool; 
-	
-		
+	adjustMyView(mybool) {
+		this.adjustView = mybool;
 	}
 
-	setAdjustCrowdPos(mycrowdBool)
-	{
- this.adjustCrowdPos = mycrowdBool
- console.log('******************TUMEPATA NI****** ',mycrowdBool);
+	setAdjustCrowdPos(mycrowdBool) {
+		this.adjustCrowdPos = mycrowdBool;
+		console.log("******************TUMEPATA NI****** ", mycrowdBool);
 	}
 
-	setView(view){
+	setView(view) {
 		this.resetView = view;
 	}
 
-	addBridgeTx(myBridgeTxData){
-
+	addBridgeTx(myBridgeTxData) {
 		this.bridgeTx.push(myBridgeTxData);
 		console.log(this.bridgeTx);
 	}
 
-	setSide(side){
+	setSide(side) {
 		this.mysetSide = side;
 	}
-	checkSideAddSign(side){
-		console.log("###############",side)
-		if(this.myBridgeRoadSign){this.myBridgeRoadSign.destroy();}
-		if(side == "left"){
-			this.myBridgeRoadSign =	this.add.image(toRes(865),toRes(800), "BRIDGESIGN").setScale(toRes(1));
-		}else{
+	checkSideAddSign(side) {
+		console.log("###############", side);
+		if (this.myBridgeRoadSign) {
+			this.myBridgeRoadSign.destroy();
+		}
+		if (side == "left") {
+			this.myBridgeRoadSign = this.add.image(toRes(865), toRes(800), "BRIDGESIGN").setScale(toRes(1));
+		} else {
 			this.myBridgeRoadSign = this.add.image(toRes(97), toRes(800), "BRIDGESIGN").setScale(toRes(1));
 		}
 	}
 
-	scrollToBridge(){
+	scrollToBridge() {
 		setInterval(() => {
-			if(this.myMainCameraPosition > 0){
-			this.myMainCameraPosition -= 10;
-			this.cameras.main.scrollY = this.myMainCameraPosition;
-			eventHub.$emit("myScrollData",{ cameraY: this.cameras.main.scrollY });
-		}}, 20);
-	
-
+			if (this.myMainCameraPosition > 0) {
+				this.myMainCameraPosition -= 10;
+				this.cameras.main.scrollY = this.myMainCameraPosition;
+				eventHub.$emit("myScrollData", { cameraY: this.cameras.main.scrollY });
+			}
+		}, 20);
 	}
 
 	generateLine(value) {
-
 		setTimeout(() => {
-			
-	
-		let boardingSide = this.side == "left" || this.side == "full" ? this.curbX - 1 : this.curbX + 1;
-		let oppositeSide =
-			this.side == "left" || this.side == "full" ? this.walkingLane + toRes(32) : this.walkingLane - toRes(32);
-		let xSeperator = toRes(17);
-		let ySeperator = toRes(17);
-		let row = 0;
-		let column = 0;
+			let boardingSide = this.side == "left" || this.side == "full" ? this.curbX - 1 : this.curbX + 1;
+			let oppositeSide =
+				this.side == "left" || this.side == "full"
+					? this.walkingLane + toRes(32)
+					: this.walkingLane - toRes(32);
+			let xSeperator = toRes(17);
+			let ySeperator = toRes(17);
+			let row = 0;
+			let column = 0;
 
-		this.lineStructure = [];
-		for (let i = 0; i < value; i++) {
-			let addedX = column * xSeperator + Math.random() * toRes(20);
-			let addedY = row * ySeperator + Math.random() * toRes(20);
-			let x = Math.round(boardingSide + (this.side == "left" || this.side == "full" ? -addedX : addedX));
-			let	y = Math.round(this.busStop + addedY);
-			this.lineStructure.push([x, y]);
-			// if(this.adjustCrowdPos){
-			// 	this.lineStructure.push([x, y+toRes(100)]);
-			// 	// this.onceAdjust = true;
-			// //	console.log("##################adjustTrue#####################")
-			// }
-			// if(this.adjustCrowdPos === false){
+			this.lineStructure = [];
+			for (let i = 0; i < value; i++) {
+				let addedX = column * xSeperator + Math.random() * toRes(20);
+				let addedY = row * ySeperator + Math.random() * toRes(20);
+				let x = Math.round(boardingSide + (this.side == "left" || this.side == "full" ? -addedX : addedX));
+				let y = Math.round(this.busStop + addedY);
+				this.lineStructure.push([x, y]);
+				// if(this.adjustCrowdPos){
+				// 	this.lineStructure.push([x, y+toRes(100)]);
+				// 	// this.onceAdjust = true;
+				// //	console.log("##################adjustTrue#####################")
+				// }
+				// if(this.adjustCrowdPos === false){
 
-			// 	this.lineStructure.push([x, y+toRes(100)]);
-			// 	// if(this.onceAdjust){
-			// 	// 	this.lineStructure.push([x, y-toRes(1300)]);
-			// 	// 	this.onceAdjust = false;
-			// 	// }else{
-			// 	// 	this.lineStructure.push([x, y]);
-			// 	// }
-			// 	//console.log("##################adjustFalse#####################")
-				
-			// }
-			// if(this.adjustCrowdPos === undefined){
-		
-			// 	//console.log("##################UNDEFFFF#####################")
-			// }
+				// 	this.lineStructure.push([x, y+toRes(100)]);
+				// 	// if(this.onceAdjust){
+				// 	// 	this.lineStructure.push([x, y-toRes(1300)]);
+				// 	// 	this.onceAdjust = false;
+				// 	// }else{
+				// 	// 	this.lineStructure.push([x, y]);
+				// 	// }
+				// 	//console.log("##################adjustFalse#####################")
 
-		
-			column++;
-			if (
-				column >= this.peoplePerRow(row) ||
-				((this.side == "left" || this.side == "full") && x < oppositeSide) ||
-				(this.side == "right" && x > oppositeSide)
-			) {
-				row++;
-				column = 0;
+				// }
+				// if(this.adjustCrowdPos === undefined){
+
+				// 	//console.log("##################UNDEFFFF#####################")
+				// }
+
+				column++;
+				if (
+					column >= this.peoplePerRow(row) ||
+					((this.side == "left" || this.side == "full") && x < oppositeSide) ||
+					(this.side == "right" && x > oppositeSide)
+				) {
+					row++;
+					column = 0;
+				}
 			}
-		}
-	}, 30);
+		}, 30);
 	}
 
 	setCrowdY(y) {
-
 		if (y === this.crowd.rawY) return false;
 		if (y < this.crowd.rawY) {
 			this.crowd.changeLowerCount++;
@@ -277,81 +283,99 @@ console.log(this.mySide)
 		this.crowdSign.y = this.crowd.y - toRes(30);
 		this.crowdSign.x = this.crowd.x;
 		this.checkView();
+	}
 
-
-		
-
-		}
-
-	createStaticSearch(){
-
-
-       setInterval(() => {
-		if(this.myMainCameraPosition > 0){
-		this.myMainCameraPosition -= 10;
-		this.cameras.main.scrollY = this.myMainCameraPosition;
-	}}, 20);
+	createStaticSearch() {
+		setInterval(() => {
+			if (this.myMainCameraPosition > 0) {
+				this.myMainCameraPosition -= 10;
+				this.cameras.main.scrollY = this.myMainCameraPosition;
+			}
+		}, 20);
 
 		this.mybus = new Bus(this);
 		this.mybus.y = 200;
 		this.mybus.text1.setText("#20975174");
 		this.mybus.text2.setText("2Gwei");
 		this.mybus.text3.setText("+0Wei");
-        this.mybus.logo.setScale(0.3);
+		this.mybus.logo.setScale(0.3);
 		this.mybus.createInside();
 		//this.busInsideSingle(this.mybus);
 		this.mybus.txsOverride = true;
 		//this.mybus.tx.length = 4;
-		this.mybus.loaded = 4 ;
-		this.mymailman = this.add.image(this.mybus.x,this.mybus.y-50,getSheetKey("person-"),"mailman-0.png").setDepth(100).setScale(0.5);
-		this.mypersonman = this.add.image(this.mybus.x-20,this.mybus.y-50,getSheetKey("person-"),"person-59.png").setDepth(100).setScale(0.5);
-		this.mysecondpersonman = this.add.image(this.mybus.x+40,this.mybus.y-50,getSheetKey("person-"),"bear-0.png").setDepth(100).setScale(0.5);
+		this.mybus.loaded = 4;
+		this.mymailman = this.add
+			.image(this.mybus.x, this.mybus.y - 50, getSheetKey("person-"), "mailman-0.png")
+			.setDepth(100)
+			.setScale(0.5);
+		this.mypersonman = this.add
+			.image(this.mybus.x - 20, this.mybus.y - 50, getSheetKey("person-"), "person-59.png")
+			.setDepth(100)
+			.setScale(0.5);
+		this.mysecondpersonman = this.add
+			.image(this.mybus.x + 40, this.mybus.y - 50, getSheetKey("person-"), "bear-0.png")
+			.setDepth(100)
+			.setScale(0.5);
 
-		this.mymailman1 = this.add.image(this.mybus.x,this.mybus.y-28,getSheetKey("person-"),"lizard-0.png").setDepth(100).setScale(0.5);
-		this.mypersonman1 = this.add.image(this.mybus.x-30,this.mybus.y-28,getSheetKey("person-"),"person-59.png").setDepth(100).setScale(0.5);
-		this.mysecondpersonman1 = this.add.image(this.mybus.x+20,this.mybus.y-28,getSheetKey("person-"),"bear-0.png").setDepth(100).setScale(0.5);
+		this.mymailman1 = this.add
+			.image(this.mybus.x, this.mybus.y - 28, getSheetKey("person-"), "lizard-0.png")
+			.setDepth(100)
+			.setScale(0.5);
+		this.mypersonman1 = this.add
+			.image(this.mybus.x - 30, this.mybus.y - 28, getSheetKey("person-"), "person-59.png")
+			.setDepth(100)
+			.setScale(0.5);
+		this.mysecondpersonman1 = this.add
+			.image(this.mybus.x + 20, this.mybus.y - 28, getSheetKey("person-"), "bear-0.png")
+			.setDepth(100)
+			.setScale(0.5);
 		//this.myPeopleInBus = this.scene.add.image(this.mybus.x,this.mybus.y, "myPeopleInBus").setOrigin(0, 0).setDepth(11);
 
 		this.mySecondBus = new Bus(this);
-		this.mySecondBus.y =400;
+		this.mySecondBus.y = 400;
 		this.mySecondBus.text1.setText("#20175274");
 		this.mySecondBus.text2.setText("4Gwei");
 		this.mySecondBus.text3.setText("+0Wei");
-        this.mySecondBus.logo.setScale(0.3);
+		this.mySecondBus.logo.setScale(0.3);
 
 		this.myThirdBus = new Bus(this);
 		this.myThirdBus.y = 600;
 		this.myThirdBus.text1.setText("#20188174");
 		this.myThirdBus.text2.setText("3Gwei");
 		this.myThirdBus.text3.setText("+0Wei");
-        this.myThirdBus.logo.setScale(0.3);
-		this.time.delayedCall(3500, () => {
-			
-		console.log("tumeanzia hapa")
-		this.myPerson =this.newPerson(this.myDummyData);
-		this.myPerson.setTexture(getSheetKey("person-"),"mailman-0.png");
-	
-		this.myPerson.active = true;
-		this.myPerson.visible = true;
-		this.myPerson.setDepth(10);
-		this.myPerson.setPosition(this.mybus.x,this.mybus.y);
-		this.myPerson.setInteractive({ useHandCursor: true });
-		this.myPerson.createHitArea();
-		this.myPerson.setLineData("status", null);
-		this.myPerson.setScale(1)
-		//this.myPerson.resetData();
+		this.myThirdBus.logo.setScale(0.3);
+		this.time.delayedCall(
+			3500,
+			() => {
+				console.log("tumeanzia hapa");
+				this.myPerson = this.newPerson(this.myDummyData);
+				this.myPerson.setTexture(getSheetKey("person-"), "mailman-0.png");
 
-		
-		
+				this.myPerson.active = true;
+				this.myPerson.visible = true;
+				this.myPerson.setDepth(10);
+				this.myPerson.setPosition(this.mybus.x, this.mybus.y);
+				this.myPerson.setInteractive({ useHandCursor: true });
+				this.myPerson.createHitArea();
+				this.myPerson.setLineData("status", null);
+				this.myPerson.setScale(1);
+				//this.myPerson.resetData();
 
-		this.myPerson.createPath([this.mybus.x-50,this.mybus.y,
-		this.mybus.x-200,this.mybus.y,
-		this.mybus.x-200,this.myThirdBus.y,
-		this.mybus.x-300,this.myThirdBus.y])
-		this.myPerson.goAlongPath();
-        }, [], this);
-
-
+				this.myPerson.createPath([
+					this.mybus.x - 50,
+					this.mybus.y,
+					this.mybus.x - 200,
+					this.mybus.y,
+					this.mybus.x - 200,
+					this.myThirdBus.y,
+					this.mybus.x - 300,
+					this.myThirdBus.y,
+				]);
+				this.myPerson.goAlongPath();
+			},
+			[],
+			this
+		);
 	}
 
 	createEtherPeopleAnims() {
@@ -573,7 +597,6 @@ console.log(this.mySide)
 
 	//go through list
 	sortBuses(instant = false, hashArray = false) {
-		console.log("sfjslkjf;lkasjfklja")
 		if (!hashArray) hashArray = this.sortedLineHashes(false);
 		for (let i = 0; i < hashArray.length; i++) {
 			hashArray[i].txData.dependingOn = false;
@@ -592,15 +615,12 @@ console.log(this.mySide)
 			if (bus.tx.length > 0) nonEmptyBuses.push(bus.getData("id"));
 		}
 
-		if(this.adjustBusHeight){
-
+		if (this.adjustBusHeight) {
 			let mybuses = this.activeBuses(false);
-             console.log(mybuses[0].y);
+			console.log(mybuses[0].y);
 			for (let i = 0; i < mybuses.length; i++) {
-
-				
-				mybuses[i].y =this.busStop +toRes(140) + toRes(230*i);
-				mybuses[i].busFloor.y =mybuses[i].y - toRes(100);
+				mybuses[i].y = this.busStop + toRes(140) + toRes(230 * i);
+				mybuses[i].busFloor.y = mybuses[i].y - toRes(100);
 			}
 			this.adjustBusHeight = false;
 			console.log(mybuses[0].y);
@@ -617,11 +637,10 @@ console.log(this.mySide)
 			bus.baseFee = this.calcBusBaseFee(activeBuses, i);
 			bus.feeText = ethUnits(bus.baseFee, true, true);
 
-			
 			// to enable visualistion of bridge transaction currently a test and should be more dyanmic if block has bridge transaction
-			if (this.bridgeTx.length >= 1){
-				bus.bridgTxs.push(...this.bridgeTx)
-				this.bridgeTx.splice(0,this.bridgeTx.length);
+			if (this.bridgeTx.length >= 1) {
+				bus.bridgTxs.push(...this.bridgeTx);
+				this.bridgeTx.splice(0, this.bridgeTx.length);
 				bus.hasBridgeTransaction = true;
 			}
 			bus.onSide = this.mySide;
@@ -662,7 +681,7 @@ console.log(this.mySide)
 				//add to line as person
 				this.newPerson(this.lineManager[entry.txData.tx]);
 				this.myDummyData = this.lineManager[entry.txData.tx];
-				eventHub.$emit("myTestPersonData",{myPersonData:this.myDummyData});
+				eventHub.$emit("myTestPersonData", { myPersonData: this.myDummyData });
 			}
 		}
 

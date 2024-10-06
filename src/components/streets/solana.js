@@ -1,6 +1,6 @@
 import { Street } from "../street.js";
 // import { toRes, ethNewTxSetDepending } from "../utils/";
-// import { mirrorX, toRes, ethNewTxSetDepending, getSheetKey } from "../utils/";
+import { mirrorX, getSheetKey } from "../utils/";
 import { toRes, ethNewTxSetDepending } from "../utils/";
 import { SOLANA, ethUnits } from "../config.js";
 import i18n from "../../i18n";
@@ -94,9 +94,15 @@ export default class SOLANAStreet extends Street {
 	async create() {
 		super.create();
 		this.addressNonces = this.config.addressNonces;
-		if(this.adjustView){this.cameras.main.scrollY =toRes(1300);}
+		if (this.adjustView) {
+			this.cameras.main.scrollY = toRes(1300);
+		}
 		this.streetCreate();
-		if(this.adjustView){this.checkSideAddSign(this.mySide);}
+		this.createAvatar();
+		if (this.adjustView) {
+			this.checkSideAddSign(this.mySide);
+		}
+
 		// await console.log("this.streetCreate()", this.streetCreate());
 		this.vue.navigation.unshift({
 			key: "characters",
@@ -130,118 +136,147 @@ export default class SOLANAStreet extends Street {
 			}),
 			this.solanaBuses();
 		this.createPeople();
+
 		eventHub.$on(this.ticker + "-follow", (address) => {
 			this.followAddress(address);
 		});
-		eventHub.$on("scrollToBridge",()=>{this.scrollToBridge()});
-		eventHub.$on("stopSignAdjustwithBridge",()=>{this.adjustBusHeight = true;this.checkSideAddSign(this.mysetSide);})
-		eventHub.$on("stopSignAdjust",()=>{	if(this.myBridgeRoadSign){this.myBridgeRoadSign.destroy();}})
-		eventHub.$on("SolanaBridgeTx",(bridgeTxData)=>{
+		eventHub.$on("scrollToBridge", () => {
+			this.scrollToBridge();
+		});
+		eventHub.$on("stopSignAdjustwithBridge", () => {
+			this.adjustBusHeight = true;
+			this.checkSideAddSign(this.mysetSide);
+		});
+		eventHub.$on("stopSignAdjust", () => {
+			if (this.myBridgeRoadSign) {
+				this.myBridgeRoadSign.destroy();
+			}
+		});
+		eventHub.$on("SolanaBridgeTx", (bridgeTxData) => {
 			this.addBridgeTx(bridgeTxData);
-		})
+		});
 		if (state.address) this.followAddress(state.address);
 	}
-	setBusStop(stop){
+
+	createIsabella() {
+		this.isabella = this.add.image(
+			mirrorX(700, this.side),
+			toRes(160),
+			getSheetKey("isabella-0.png"),
+			"isabella-0.png"
+		);
+		this.isabella.setDisplaySize(toRes(64), toRes(64));
+		this.isabella.setInteractive({ useHandCursor: true });
+		this.isabella.on("pointerup", () => {
+			this.cycleIsaMessage();
+		});
+		this.isabella.setDepth(this.personDepth);
+		this.isabella.messages = [
+			"Welcome to Monero Street! I'm Isabella.",
+			"Are you an angel or is that a ring signature on your head?",
+			"Why do we all look the same? We represent Monero's fungibility and privacy!",
+			"That bus will automatically get larger in the future when the street gets busy. Monero has a dynamic block size limit.",
+			"Don't ask where we come from. Without a sender's view key, it's impossible to see addresses associated with a transaction.",
+		];
+		this.cycleIsaMessage();
+	}
+	setBusStop(stop) {
 		this.busStop = toRes(stop);
 	}
 
-	adjustMyView(mybool){
-     this.adjustView = mybool;
+	adjustMyView(mybool) {
+		this.adjustView = mybool;
 	}
 
-	setView(view){
+	setView(view) {
 		this.cameras.main.scrollY = toRes(view);
 	}
 
-	addBridgeTx(myBridgeTxData){
-
+	addBridgeTx(myBridgeTxData) {
 		this.bridgeTx.push(myBridgeTxData);
 		console.log(this.bridgeTx);
 	}
-	setSide(side){
+	setSide(side) {
 		this.mysetSide = side;
 	}
 
-	checkSideAddSign(side){
+	checkSideAddSign(side) {
+		console.log("###############", side);
 
-		console.log("###############",side)
+		if (this.myBridgeRoadSign) {
+			this.myBridgeRoadSign.destroy();
+		}
 
-		if(this.myBridgeRoadSign){this.myBridgeRoadSign.destroy();}
-
-		if(side == "left"){
-		this.myBridgeRoadSign = this.add.image(toRes(865), toRes(800), "BRIDGESIGN").setScale(toRes(1));
-		}else{
-		this.myBridgeRoadSign = this.add.image(toRes(97), toRes(800), "BRIDGESIGN").setScale(toRes(1));
+		if (side == "left") {
+			this.myBridgeRoadSign = this.add.image(toRes(865), toRes(800), "BRIDGESIGN").setScale(toRes(1));
+		} else {
+			this.myBridgeRoadSign = this.add.image(toRes(97), toRes(800), "BRIDGESIGN").setScale(toRes(1));
 		}
 	}
-	scrollToBridge(){
+	scrollToBridge() {
 		setInterval(() => {
-			if(this.myMainCameraPosition > 0){
-			this.myMainCameraPosition -= 10;
-			this.cameras.main.scrollY = this.myMainCameraPosition;
-		}}, 20);
-	
-
+			if (this.myMainCameraPosition > 0) {
+				this.myMainCameraPosition -= 10;
+				this.cameras.main.scrollY = this.myMainCameraPosition;
+			}
+		}, 20);
 	}
 
 	generateLine(value) {
-
 		setTimeout(() => {
-			
-	
-		let boardingSide = this.side == "left" || this.side == "full" ? this.curbX - 1 : this.curbX + 1;
-		let oppositeSide =
-			this.side == "left" || this.side == "full" ? this.walkingLane + toRes(32) : this.walkingLane - toRes(32);
-		let xSeperator = toRes(17);
-		let ySeperator = toRes(17);
-		let row = 0;
-		let column = 0;
+			let boardingSide = this.side == "left" || this.side == "full" ? this.curbX - 1 : this.curbX + 1;
+			let oppositeSide =
+				this.side == "left" || this.side == "full"
+					? this.walkingLane + toRes(32)
+					: this.walkingLane - toRes(32);
+			let xSeperator = toRes(17);
+			let ySeperator = toRes(17);
+			let row = 0;
+			let column = 0;
 
-		this.lineStructure = [];
-		for (let i = 0; i < value; i++) {
-			let addedX = column * xSeperator + Math.random() * toRes(20);
-			let addedY = row * ySeperator + Math.random() * toRes(20);
-			let x = Math.round(boardingSide + (this.side == "left" || this.side == "full" ? -addedX : addedX));
-			let	y = Math.round(this.busStop + addedY);
-			this.lineStructure.push([x, y]);
-			// if(this.adjustCrowdPos){
-			// 	this.lineStructure.push([x, y+toRes(100)]);
-			// 	// this.onceAdjust = true;
-			// //	console.log("##################adjustTrue#####################")
-			// }
-			// if(this.adjustCrowdPos === false){
+			this.lineStructure = [];
+			for (let i = 0; i < value; i++) {
+				let addedX = column * xSeperator + Math.random() * toRes(20);
+				let addedY = row * ySeperator + Math.random() * toRes(20);
+				let x = Math.round(boardingSide + (this.side == "left" || this.side == "full" ? -addedX : addedX));
+				let y = Math.round(this.busStop + addedY);
+				this.lineStructure.push([x, y]);
+				// if(this.adjustCrowdPos){
+				// 	this.lineStructure.push([x, y+toRes(100)]);
+				// 	// this.onceAdjust = true;
+				// //	console.log("##################adjustTrue#####################")
+				// }
+				// if(this.adjustCrowdPos === false){
 
-			// 	this.lineStructure.push([x, y+toRes(100)]);
-			// 	// if(this.onceAdjust){
-			// 	// 	this.lineStructure.push([x, y-toRes(1300)]);
-			// 	// 	this.onceAdjust = false;
-			// 	// }else{
-			// 	// 	this.lineStructure.push([x, y]);
-			// 	// }
-			// 	//console.log("##################adjustFalse#####################")
-				
-			// }
-			// if(this.adjustCrowdPos === undefined){
-		
-			// 	//console.log("##################UNDEFFFF#####################")
-			// }
+				// 	this.lineStructure.push([x, y+toRes(100)]);
+				// 	// if(this.onceAdjust){
+				// 	// 	this.lineStructure.push([x, y-toRes(1300)]);
+				// 	// 	this.onceAdjust = false;
+				// 	// }else{
+				// 	// 	this.lineStructure.push([x, y]);
+				// 	// }
+				// 	//console.log("##################adjustFalse#####################")
 
-		
-			column++;
-			if (
-				column >= this.peoplePerRow(row) ||
-				((this.side == "left" || this.side == "full") && x < oppositeSide) ||
-				(this.side == "right" && x > oppositeSide)
-			) {
-				row++;
-				column = 0;
+				// }
+				// if(this.adjustCrowdPos === undefined){
+
+				// 	//console.log("##################UNDEFFFF#####################")
+				// }
+
+				column++;
+				if (
+					column >= this.peoplePerRow(row) ||
+					((this.side == "left" || this.side == "full") && x < oppositeSide) ||
+					(this.side == "right" && x > oppositeSide)
+				) {
+					row++;
+					column = 0;
+				}
 			}
-		}
-	}, 30);
+		}, 30);
 	}
 
 	setCrowdY(y) {
-
 		if (y === this.crowd.rawY) return false;
 		if (y < this.crowd.rawY) {
 			this.crowd.changeLowerCount++;
@@ -255,11 +290,7 @@ export default class SOLANAStreet extends Street {
 		this.crowdSign.y = this.crowd.y - toRes(30);
 		this.crowdSign.x = this.crowd.x;
 		this.checkView();
-
-
-		
-
-		}
+	}
 
 	crowdCountDisplay() {
 		if (this.vue.stats["mempool-size"].value && this.vue.stats["mempool-size"].value > 75000) {
@@ -437,7 +468,8 @@ export default class SOLANAStreet extends Street {
 	}
 
 	//go through list
-	sortBuses(instant = false, hashArray = false) {/*
+	sortBuses(instant = false, hashArray = false) {
+		/*
 		if (!hashArray) hashArray = this.sortedLineHashes(false);
 		for (let i = 0; i < hashArray.length; i++) {
 			hashArray[i].txData.dependingOn = false;
