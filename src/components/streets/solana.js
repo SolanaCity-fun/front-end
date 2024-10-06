@@ -99,6 +99,7 @@ export default class SOLANAStreet extends Street {
 		}
 		this.streetCreate();
 		this.createAvatar();
+
 		if (this.adjustView) {
 			this.checkSideAddSign(this.mySide);
 		}
@@ -222,59 +223,59 @@ export default class SOLANAStreet extends Street {
 		}, 20);
 	}
 
-	generateLine(value) {
-		setTimeout(() => {
-			let boardingSide = this.side == "left" || this.side == "full" ? this.curbX - 1 : this.curbX + 1;
-			let oppositeSide =
-				this.side == "left" || this.side == "full"
-					? this.walkingLane + toRes(32)
-					: this.walkingLane - toRes(32);
-			let xSeperator = toRes(17);
-			let ySeperator = toRes(17);
-			let row = 0;
-			let column = 0;
+	// generateLine(value) {
+	// 	setTimeout(() => {
+	// 		let boardingSide = this.side == "left" || this.side == "full" ? this.curbX - 1 : this.curbX + 1;
+	// 		let oppositeSide =
+	// 			this.side == "left" || this.side == "full"
+	// 				? this.walkingLane + toRes(32)
+	// 				: this.walkingLane - toRes(32);
+	// 		let xSeperator = toRes(17);
+	// 		let ySeperator = toRes(17);
+	// 		let row = 0;
+	// 		let column = 0;
 
-			this.lineStructure = [];
-			for (let i = 0; i < value; i++) {
-				let addedX = column * xSeperator + Math.random() * toRes(20);
-				let addedY = row * ySeperator + Math.random() * toRes(20);
-				let x = Math.round(boardingSide + (this.side == "left" || this.side == "full" ? -addedX : addedX));
-				let y = Math.round(this.busStop + addedY);
-				this.lineStructure.push([x, y]);
-				// if(this.adjustCrowdPos){
-				// 	this.lineStructure.push([x, y+toRes(100)]);
-				// 	// this.onceAdjust = true;
-				// //	console.log("##################adjustTrue#####################")
-				// }
-				// if(this.adjustCrowdPos === false){
+	// 		this.lineStructure = [];
+	// 		for (let i = 0; i < value; i++) {
+	// 			let addedX = column * xSeperator + Math.random() * toRes(20);
+	// 			let addedY = row * ySeperator + Math.random() * toRes(20);
+	// 			let x = Math.round(boardingSide + (this.side == "left" || this.side == "full" ? -addedX : addedX));
+	// 			let y = Math.round(this.busStop + addedY);
+	// 			this.lineStructure.push([x, y]);
+	// 			// if(this.adjustCrowdPos){
+	// 			// 	this.lineStructure.push([x, y+toRes(100)]);
+	// 			// 	// this.onceAdjust = true;
+	// 			// //	console.log("##################adjustTrue#####################")
+	// 			// }
+	// 			// if(this.adjustCrowdPos === false){
 
-				// 	this.lineStructure.push([x, y+toRes(100)]);
-				// 	// if(this.onceAdjust){
-				// 	// 	this.lineStructure.push([x, y-toRes(1300)]);
-				// 	// 	this.onceAdjust = false;
-				// 	// }else{
-				// 	// 	this.lineStructure.push([x, y]);
-				// 	// }
-				// 	//console.log("##################adjustFalse#####################")
+	// 			// 	this.lineStructure.push([x, y+toRes(100)]);
+	// 			// 	// if(this.onceAdjust){
+	// 			// 	// 	this.lineStructure.push([x, y-toRes(1300)]);
+	// 			// 	// 	this.onceAdjust = false;
+	// 			// 	// }else{
+	// 			// 	// 	this.lineStructure.push([x, y]);
+	// 			// 	// }
+	// 			// 	//console.log("##################adjustFalse#####################")
 
-				// }
-				// if(this.adjustCrowdPos === undefined){
+	// 			// }
+	// 			// if(this.adjustCrowdPos === undefined){
 
-				// 	//console.log("##################UNDEFFFF#####################")
-				// }
+	// 			// 	//console.log("##################UNDEFFFF#####################")
+	// 			// }
 
-				column++;
-				if (
-					column >= this.peoplePerRow(row) ||
-					((this.side == "left" || this.side == "full") && x < oppositeSide) ||
-					(this.side == "right" && x > oppositeSide)
-				) {
-					row++;
-					column = 0;
-				}
-			}
-		}, 30);
-	}
+	// 			column++;
+	// 			if (
+	// 				column >= this.peoplePerRow(row) ||
+	// 				((this.side == "left" || this.side == "full") && x < oppositeSide) ||
+	// 				(this.side == "right" && x > oppositeSide)
+	// 			) {
+	// 				row++;
+	// 				column = 0;
+	// 			}
+	// 		}
+	// 	}, 30);
+	// }
 
 	setCrowdY(y) {
 		if (y === this.crowd.rawY) return false;

@@ -1124,7 +1124,7 @@ export const SOLANA = {
 		signArray: {
 			title: "Sign Display",
 			type: "multiselect",
-			value: ["lastBlock", "medianFee-usdTransfer", "mempool-size"],
+			value: ["medianFee-usdTransfer"],
 			writable: true,
 			invisible: true,
 			restart: false,

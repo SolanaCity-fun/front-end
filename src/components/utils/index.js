@@ -162,7 +162,7 @@ export const calcStatValue = (stat, customValue = false) => {
 	let value = customValue || stat.value || stat.default;
 	if (typeof stat.format === "function") return stat.format(value);
 	let after = stat.after;
-	if (!value && value !== 0) return "Loading...";
+	if (!value && value !== 0) return "$0.002 USD";
 	if (!isNaN(value) && Boolean(stat.limit) && value > stat.limit) {
 		value = stat.limit;
 		after = "+";

@@ -89,6 +89,20 @@ export class Street extends Phaser.Scene {
 		this.Avatar = new Avatar(this, this.side, 250, 300, "person-19.png");
 		this.Avatar.setupControls(this);
 		console.log("##########createdAvatar");
+		// this.Avatar.setDisplaySize(toRes(64), toRes(64));
+		// this.Avatar.setInteractive({ useHandCursor: true });
+		// this.Avatar.on("pointerup", () => {
+		// 	this.cycleIsaMessage1();
+		// });
+		// this.Avatar.setDepth(this.personDepth);
+		this.Avatar.messages = [
+			"Welcome to Monero Street! I'm Isabella.",
+			"Are you an angel or is that a ring signature on your head?",
+			"Why do we all look the same? We represent Monero's fungibility and privacy!",
+			"That bus will automatically get larger in the future when the street gets busy. Monero has a dynamic block size limit.",
+			"Don't ask where we come from. Without a sender's view key, it's impossible to see addresses associated with a transaction.",
+		];
+		// this.cycleIsaMessage1();
 	}
 	_getRightFxPlugin() {
 		if (this._isABadApple()) {
