@@ -157,6 +157,7 @@ export default class SOLANAStreet extends Street {
 			this.addBridgeTx(bridgeTxData);
 		});
 		if (state.address) this.followAddress(state.address);
+		this.stoplight.setLight("green");
 	}
 
 	createIsabella() {
