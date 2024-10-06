@@ -49,16 +49,20 @@ export default class solBus extends Phaser.GameObjects.Container {
 
          this.solLogo = this.scene.add.image(toRes(this.busTopSprite.x),this.busTopSprite.y + toRes(this.busTopSprite.height+30), "solana").setScale(toRes(0.8)).setOrigin(0.5,0);
          this.add(this.solLogo);
-        // this.text3.setOrigin(0.5);
-        // this.lightsSprite = [];
-        // this.lightsSprite[0] = this.scene.add.image(1, 107 + this.busHeight - 80, getSheetKey("lights.png"), "lights.png");
 
+         this.solBusInside = this.scene.add.image(toRes(this.busTopSprite.x-5),this.busTopSprite.y + toRes(this.busTopSprite.height-5), "solBusIn").setScale(toRes(1.18)).setOrigin(0.5);
+         this.solBusInside.visible = false;
+         this.add(this.solBusInside);
 
-      
+         this.busBottomSprite.setInteractive({useHandCursor:true});
 
-
-
-
+         this.busBottomSprite.on("pointerover", (pointer, gameObject) => {
+           this.solBusInside.visible = true;
+		});
+		this.busBottomSprite.on("pointerout", (pointer, gameObject) => {
+           this.solBusInside.visible = false;
+            
+		});
 
 
       }

@@ -103,15 +103,12 @@ export default class SOLANAStreet extends Street {
 		if(this.adjustView){this.cameras.main.scrollY =toRes(1300);}
 		this.streetCreate();
 		//this.mySolBus = new solBus(this,"294758986","5 Gwei","+0 wei");
-        // this.busTimer = this.time.addEvent({
-        //     delay: 1000, // 1 second interval between myBuses
-        //     callback: this.spawnBus,
-        //     callbackScope: this,
-        //     loop: true
-        // });
-		setInterval(() => {
-			if(this.myBuses)this.spawnBus();
-		}, 500);
+        this.busTimer = this.time.addEvent({
+            delay: 500, // 1 second interval between myBuses
+            callback: ()=>{if(this.myBuses)this.spawnBus();},
+            callbackScope: this,
+            loop: true
+        });
 		if(this.adjustView){this.checkSideAddSign(this.mySide);}
 		// await console.log("this.streetCreate()", this.streetCreate());
 		this.vue.navigation.unshift({
@@ -161,19 +158,19 @@ export default class SOLANAStreet extends Street {
 	spawnBus(){
 		let busNumber = this.busCount++;
         let randomGwei = Phaser.Math.Between(0, 10); // Random Gwei value between 0 and 10
-        let gweiString = `${randomGwei} Gwei`;
+        let gweiString = `${randomGwei}k Lam`;
 
         // Create the bus using your existing solBus class
-        let bus = new solBus(this, busNumber.toString(), gweiString, "+0 wei",false);
+        let bus = new solBus(this, busNumber.toString(), gweiString, "+0 lam",false);
 
-		let busTwo = new solBus(this, busNumber.toString(), gweiString, "+0 wei",true);
+		let busTwo = new solBus(this, busNumber.toString(), gweiString, "+0 lam",true);
         
         // Add the bus to an array or group to keep track of them
         this.myBuses.push(bus);
 		this.myBuses.push(busTwo);
 		this.mysolbcount++;
-		bus.y = bus.y + (this.mysolbcount*200);
-		busTwo.y = busTwo.y + (this.mysolbcount*300);
+		// bus.y = bus.y + (this.mysolbcount*200);
+		// busTwo.y = busTwo.y + (this.mysolbcount*300);
         // Position the bus and animate its movement upwards
        // bus.container.setPosition(400, 600); // Set the initial position (adjust as needed)
         
@@ -182,8 +179,8 @@ export default class SOLANAStreet extends Street {
                 targets: bus,
                 y: -500, // Move the bus off-screen
 				ease: "Linear",
-				delay:1500 + (this.mysolbcount*100),
-                duration: 35000+ (this.mysolbcount*100), // Adjust as needed for speed
+				delay:1500 ,
+                duration: 20000, // Adjust as needed for speed
                 onComplete: () => {
                     // Remove bus from array and destroy container after moving off-screen
                    //this.myBuses[i].destroy(); 
@@ -195,8 +192,8 @@ export default class SOLANAStreet extends Street {
                 targets: busTwo,
                 y: -500, // Move the bus off-screen
 				ease: "Linear",
-				delay:1500 + (this.mysolbcount*100),
-                duration: 35000+ (this.mysolbcount*100), // Adjust as needed for speed
+				delay:2500 ,
+                duration: 15000, // Adjust as needed for speed
                 onComplete: () => {
                     // Remove bus from array and destroy container after moving off-screen
                    //this.myBuses[i].destroy(); 
