@@ -73,6 +73,9 @@ export class Street extends Phaser.Scene {
 
 		let houses = await getHouseArray(this.config);
 		this.createHouses(houses);
+		// In your scene's create method
+		this.fixedContainer = this.add.container(0, 0);
+		this.fixedContainer.setScrollFactor(0);
 	}
 
 	streetInit() {
@@ -966,7 +969,7 @@ export class Street extends Phaser.Scene {
 		if (!this.noHousesArea) {
 			if (this.ticker == "SOLANA") {
 				this.houseCurb = this.add.tileSprite(
-					mirrorX(667, this.side),
+					mirrorX(587, this.side),
 					0,
 					config.theme.houseCurbWidth,
 					window.innerHeight - config.vPadding,
@@ -979,13 +982,14 @@ export class Street extends Phaser.Scene {
 				this.houseCurb.setScale(config.resolution);
 
 				this.houseCurbTwo = this.add.tileSprite(
-					mirrorX(477, this.side),
-					0,
+					mirrorX(387, this.side),
+					100,
 					config.theme.houseCurbWidth,
 					window.innerHeight - config.vPadding,
 					getSheetKey("bushes.png"),
 					"bushes.png"
 				);
+
 				if (this.side !== "right") this.houseCurb.setFlipX(true);
 				this.houseCurbTwo.scrollFactorY = 0;
 				this.houseCurbTwo.setOrigin(0.5, 0);
@@ -1009,12 +1013,15 @@ export class Street extends Phaser.Scene {
 		this.stoplight = new Stoplight(this);
 		if (this.ticker == "SOLANA" && this.side == "right") {
 			this.stoplightTwo = new Stoplight(this);
+
 			this.stoplightTwo.setMyXpos(883);
 			this.stoplightTwo.flipMyStopLight(true);
 			this.stoplightTwo.adjustMyLightPosX();
+			this.stoplightTwo.setLight("green");
 		}
 		this.sign = new Sign(this);
 		this.sign.alternateStats();
+		this.fixedContainer.add(this.houseCurbTwo);
 	}
 
 	fadeColors(array, interval, duration) {
@@ -1827,6 +1834,15 @@ export class Street extends Phaser.Scene {
 			this.houseCurb.height = newHeight;
 			if (this.houseCurbTwo) {
 				this.houseCurbTwo.height = newHeight;
+
+				// New code for fixing houseCurbTwo position
+				if (this.fixedContainer) {
+					this.fixedContainer.setSize(newWidth, newHeight);
+
+					// Adjust Y position to be fixed relative to the window
+					// You may need to adjust this value to fit your layout
+					this.houseCurbTwo.y = window.innerHeight * 0.1; // 10% from the top
+				}
 			}
 		}
 	}
