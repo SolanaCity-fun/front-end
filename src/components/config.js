@@ -1625,14 +1625,14 @@ export const LUKSO = {
 //#ffe599
 export const CELO = {
 	ticker: "CELO",
-	coinName: "CELO",
-	color: "ffe599",
-	busColor: "ffe599",
+	coinName: "TON",
+	color: "2A82EB",
+	busColor: "2A82EB",
 	busCapacity: 0,
 	feeVar: "gp",
-	explorerTxUrl: "https://explorer.celo.org/mainnet/tx/",
-	explorerBlockUrl: "https://explorer.celo.org/mainnet/block/",
-	explorerBlocksUrl: "https://explorer.celo.org/mainnet/blocks/",
+	explorerTxUrl: "https://tonscan.org/tx/",
+	explorerBlockUrl: "https://tonscan.org/block/-1:8000000000000000:",
+	explorerBlocksUrl: "https://tonscan.org/blocks/",
 	explorerAddressUrl: "",
 	liveTxs: [],
 	liveBlocks: [],
@@ -2772,8 +2772,9 @@ export const enabledConfig = {
 	// LTC,
 	//ARBI,
 	// MANTA,
-	// CELO,
+	CELO,
 	// LUKSO,
+	// TON,
 };
 
 export const additionalSheets = {
