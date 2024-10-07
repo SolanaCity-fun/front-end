@@ -63,7 +63,13 @@ export class StreetController extends Phaser.Scene {
 		this.load.setPath(config.baseUrl + "static/img/");
 		this.load.image("BRIDGE", "BRIDGE.png?v=" + process.env.VUE_APP_VERSION);
 		this.load.image("xbut", "xbut.png?v=" + process.env.VUE_APP_VERSION);
-		this.load.image("bridgeBut", "bridgeBut.png?v=" + process.env.VUE_APP_VERSION);
+
+		this.load.image("solana", "solana.png?v=" + process.env.VUE_APP_VERSION);
+		this.load.image("solbb", "solbb.png?v=" + process.env.VUE_APP_VERSION);
+		this.load.image("solbtop", "solbtop.png?v=" + process.env.VUE_APP_VERSION);
+		this.load.image("solBusIn", "solBusIn.png?v=" + process.env.VUE_APP_VERSION);
+		this.load.image("bridgeBut","bridgeBut.png?v=" + process.env.VUE_APP_VERSION);
+
 		this.load.image("BRIDGESIGN", "BRIDGESTOP.png?v=" + process.env.VUE_APP_VERSION);
 		this.load.multiatlas("sheet", "sheet.json?v=" + process.env.VUE_APP_VERSION);
 		this.load.multiatlas("characters", "characters.json?v=" + process.env.VUE_APP_VERSION);
