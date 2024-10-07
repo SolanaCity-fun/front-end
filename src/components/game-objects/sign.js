@@ -18,14 +18,38 @@ export default class Sign extends Phaser.GameObjects.Container {
 			this.y = this.scene.busStop - toRes(105);
 		}
 
-		eventHub.$on('stopSignAdjust',()=>{if(this.scene.config.ticker == "ETH"){this.y = toRes(100) }});
-		eventHub.$on('stopSignAdjustwithBridge',()=>{if(this.scene.config.ticker == "ETH"){this.y = this.scene.busStop - toRes(100); }})
+		eventHub.$on("stopSignAdjust", () => {
+			if (this.scene.config.ticker == "ETH") {
+				this.y = toRes(100);
+			}
+		});
+		eventHub.$on("stopSignAdjustwithBridge", () => {
+			if (this.scene.config.ticker == "ETH") {
+				this.y = this.scene.busStop - toRes(100);
+			}
+		});
 
-		eventHub.$on('stopSignAdjust',()=>{if(this.scene.config.ticker == "BTC"){this.y = toRes(100) }});
-		eventHub.$on('stopSignAdjustwithBridge',()=>{if(this.scene.config.ticker == "BTC"){this.y = this.scene.busStop - toRes(100); }})
+		eventHub.$on("stopSignAdjust", () => {
+			if (this.scene.config.ticker == "BTC") {
+				this.y = toRes(100);
+			}
+		});
+		eventHub.$on("stopSignAdjustwithBridge", () => {
+			if (this.scene.config.ticker == "BTC") {
+				this.y = this.scene.busStop - toRes(100);
+			}
+		});
 
-		eventHub.$on('stopSignAdjust',()=>{if(this.scene.config.ticker == "SOLANA"){this.y = toRes(100) }})
-		eventHub.$on('stopSignAdjustwithBridge',()=>{if(this.scene.config.ticker == "SOLANA"){this.y = this.scene.busStop - toRes(100); }})	
+		eventHub.$on("stopSignAdjust", () => {
+			if (this.scene.config.ticker == "SOLANA") {
+				this.y = toRes(100);
+			}
+		});
+		eventHub.$on("stopSignAdjustwithBridge", () => {
+			if (this.scene.config.ticker == "SOLANA") {
+				this.y = this.scene.busStop - toRes(100);
+			}
+		});
 
 		this.signWidth = toRes(430);
 		this.adBanner = process.env.VUE_APP_SIGN_ADS === "true" ? true : false;
@@ -115,6 +139,7 @@ export default class Sign extends Phaser.GameObjects.Container {
 		let sixthSize = signHeight / 6;
 
 		let signFontColor = Phaser.Display.Color.HexStringToColor(config.theme.signFontColor);
+
 		this.middleText = this.scene.add.bitmapText(0, signTop + sixthSize * 2, "highway", "Loading...", this.fontSize);
 		this.middleText.setOrigin(0.5, 0.5);
 		this.middleText.setTint(signFontColor.color);
