@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { toRes, toResRev } from "./../utils/";
+import eventHub from "../vue/eventHub.js";
 
 export default class Popup extends Phaser.GameObjects.Container {
 	constructor(scene, x, y, house, type, text,text1,text2,text3, length = false) {
@@ -41,6 +42,8 @@ export default class Popup extends Phaser.GameObjects.Container {
 
 	bye() {
 		this.destroy();
+		eventHub.$emit("popUpDestroyed");
+		console.log("#########wamenivunjavunja");
 	}
 
 	getHash(){

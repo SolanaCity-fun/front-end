@@ -91,6 +91,7 @@ export class Street extends Phaser.Scene {
 		console.log("##########notcreatedAvatar");
 		this.Avatar = new Avatar(this, this.side, 250, 300, "person-19.png");
 		this.Avatar.setupControls(this);
+		//this.Avatar.setupPopUp(this);
 		console.log("##########createdAvatar");
 		// this.Avatar.setDisplaySize(toRes(64), toRes(64));
 		// this.Avatar.setInteractive({ useHandCursor: true });
@@ -3139,6 +3140,9 @@ export class Street extends Phaser.Scene {
 	}
 
 	streetUpdate() {
+
+        if(this.Avatar)this.Avatar.updateAvatarPopUp();
+
 		if (!this.vue.isConnected) return;
 		for (let i = this.movingPeople.length - 1; i >= 0; i--) {
 			const person = this.movingPeople[i];
