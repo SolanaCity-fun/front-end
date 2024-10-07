@@ -73,6 +73,7 @@ export class Street extends Phaser.Scene {
 
 		let houses = await getHouseArray(this.config);
 		this.createHouses(houses);
+		this.createSolHouses();
 		// In your scene's create method
 		this.fixedContainer = this.add.container(0, 0);
 		this.fixedContainer.setScrollFactor(0);
@@ -2913,7 +2914,20 @@ export class Street extends Phaser.Scene {
 		this.housePlans[houseObj.name].spawn = [houseX, houseY];
 	}
 
+	createSolHouses(){
+		if(this.ticker == "SOLANA"){console.log("keja ka jupiter manzeeeeeeeeeeeeeeeeeeee")
+
+			let solhouseOverlay = this.add.image(toRes(445), this.busStop+toRes(100),"houseback").setScale(config.resolution);
+			let solhouse = this.add.image(toRes(445), this.busStop+toRes(100), getSheetKey("house.png"), "house.png").setScale(config.resolution);
+			let juplogo = this.add.image(toRes(445), this.busStop+toRes(80), "juplogo").setScale(config.resolution);
+
+			
+		}
+	}
+
 	createHouse(houseObj) {
+
+		
 		let path =
 			// (config.locale === "en" ? "" : config.locale + "/") +
 			this.config.ticker + "/" + houseObj.name;
