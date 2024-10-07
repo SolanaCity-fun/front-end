@@ -117,9 +117,9 @@ export default class CELOStreet extends Street {
 			position: "center",
 		});
 
-		this.vue.busFeeTitle = "Gwei";
+		this.vue.busFeeTitle = "TON";
 		(this.vue.busFeeTitleLong = () => {
-			return "Tip Price (Gwei)";
+			return "Tip Price (Ton)";
 		}),
 			(this.vue.sizeTitle = () => {
 				return i18n.t(this.ticker.toLowerCase() + ".sizeTitle");
@@ -255,6 +255,7 @@ export default class CELOStreet extends Street {
 				}
 				break;
 			}
+			console.log(bus);
 			this.addTxToBus(entry, bus, busId, instant, skipTxs, increasingNonces, toMove);
 		}
 		bus.realLoaded = bus.loaded;
@@ -337,7 +338,9 @@ export default class CELOStreet extends Street {
 				continue;
 			}
 			bus.baseFee = this.calcBusBaseFee(activeBuses, i);
-			bus.feeText = ethUnits(bus.baseFee, true, true);
+			bus.feeText = `${(bus.baseFee / 10 ** 12).toFixed(4)} TON`;
+
+			console.log("bus base fee", bus.baseFee / 10 ** 9);
 			this.addBusTxs(bus, hashArray, skipTxs, instant, increasingNonces, toMove);
 		}
 
@@ -384,7 +387,7 @@ export default class CELOStreet extends Street {
 		let target = this.getGasTarget();
 		for (let i = activeBuses.length - 1; i >= 0; i--) {
 			this.calcBusFees(activeBuses, i);
-			activeBuses[i].feeText2 = "+" + ethUnits(Math.ceil(activeBuses[i].lowFee) * 1000000000);
+			//activeBuses[i].feeText2 = "+" + ethUnits(Math.ceil(activeBuses[i].lowFee) * 1000000000);
 			let busId = activeBuses[i].getData("id");
 			if (foundLoaded || nonEmptyBuses.includes(busId) || activeBuses[i].tx.length > 0) {
 				foundLoaded = true;
