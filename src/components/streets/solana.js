@@ -234,7 +234,7 @@ export default class SOLANAStreet extends Street {
                 y: -500, // Move the bus off-screen
 				ease: "Linear",
 				delay:2500 ,
-                duration: 15000, // Adjust as needed for speed
+                duration: 20000, // Adjust as needed for speed
                 onComplete: () => {
                     // Remove bus from array and destroy container after moving off-screen
                    //this.myBuses[i].destroy(); 
