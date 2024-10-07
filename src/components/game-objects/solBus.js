@@ -17,7 +17,7 @@ export default class solBus extends Phaser.GameObjects.Container {
 
         this.onMyRight = onRight;
 
-        if(this.onMyRight){this.x = toRes(850);}else{ this.x = toRes(100);}
+        if(this.onMyRight){this.x = toRes(850);}else{ this.x = toRes(89);}
        
 
         this.createSolanaBus();

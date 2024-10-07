@@ -106,7 +106,7 @@ export default class SOLANAStreet extends Street {
 		this.streetCreate();
 		//this.mySolBus = new solBus(this,"294758986","5 Gwei","+0 wei");
         this.busTimer = this.time.addEvent({
-            delay: 500, // 1 second interval between myBuses
+            delay: 600, // 1 second interval between myBuses
             callback: ()=>{if(this.myBuses)this.spawnBus();},
             callbackScope: this,
             loop: true
