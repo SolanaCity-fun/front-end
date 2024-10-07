@@ -60,6 +60,26 @@ Avatar.prototype.setupControls = function (scene) {
 		this.myAvatar.anims.play("walk_side_2", true);
 	});
 
+	scene.input.keyboard.on("keyup-A", () => {
+	
+		this.myAvatar.anims.play("stand_2", true);
+	});
+
+	scene.input.keyboard.on("keyup-D", () => {
+	
+		this.myAvatar.anims.play("stand_2", true);
+	});
+
+	scene.input.keyboard.on("keyup-W", () => {
+	
+		this.myAvatar.anims.play("stand_2", true);
+	});
+
+	scene.input.keyboard.on("keyup-S", () => {
+	
+		this.myAvatar.anims.play("stand_2", true);
+	});
+
 	this.myAvatar.on("pointerdown",()=>{
 
 		this.setupPopUp(scene);
