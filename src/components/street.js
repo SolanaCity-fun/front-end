@@ -867,14 +867,14 @@ export class Street extends Phaser.Scene {
 			this.pathSprite = this.add.tileSprite(
 				this.side == "right" ? toRes(192) : toRes(this.noHousesArea ? 0 : 256),
 				0,
-				this.noHousesArea ? 768 : 100,
+				this.noHousesArea ? 768 : 157,
 				window.innerHeight - config.vPadding,
 				getSheetKey("road.png"),
 				"road.png"
 			);
 
 			this.pathSpriteTwo = this.add.tileSprite(
-				this.side == "right" ? toRes(480) : toRes(this.noHousesArea ? 0 : 256),
+				this.side == "right" ? toRes(537) : toRes(this.noHousesArea ? 0 : 256),
 				0,
 				this.noHousesArea ? 768 : 280,
 				window.innerHeight - config.vPadding,
@@ -903,7 +903,7 @@ export class Street extends Phaser.Scene {
 				this.side == "right" ? toRes(192) : toRes(this.noHousesArea ? 0 : 256),
 				0,
 				this.noHousesArea ? 768 : 512,
-				window.innerHeight - config.vPadding,
+				toRes(window.innerHeight - config.vPadding),
 				getSheetKey("road.png"),
 				"road.png"
 			);
@@ -970,29 +970,29 @@ export class Street extends Phaser.Scene {
 		if (!this.noHousesArea) {
 			if (this.ticker == "SOLANA") {
 				this.houseCurb = this.add.tileSprite(
-					mirrorX(667, this.side),
-					0,
+					mirrorX(610, this.side),
+					this.busStop-toRes(100),
 					config.theme.houseCurbWidth,
-					window.innerHeight - config.vPadding,
+					window.innerHeight*2 ,
 					getSheetKey("bushes.png"),
 					"bushes.png"
 				);
 				if (this.side !== "right") this.houseCurb.setFlipX(true);
-				this.houseCurb.scrollFactorY = 0;
+				this.houseCurb.scrollFactorY = 1;
 				this.houseCurb.setOrigin(0.5, 0);
 				this.houseCurb.setScale(config.resolution);
 
 				this.houseCurbTwo = this.add.tileSprite(
-					mirrorX(477, this.side),
-					0,
+					mirrorX(420, this.side),
+					this.busStop-toRes(100),
 					config.theme.houseCurbWidth,
-					window.innerHeight - config.vPadding,
+					window.innerHeight*2 ,
 					getSheetKey("bushes.png"),
 					"bushes.png"
 				);
 
 				if (this.side !== "right") this.houseCurb.setFlipX(true);
-				this.houseCurbTwo.scrollFactorY = 0;
+				this.houseCurbTwo.scrollFactorY = 1;
 				this.houseCurbTwo.setOrigin(0.5, 0);
 				this.houseCurbTwo.setScale(config.resolution);
 			} else {
@@ -1833,8 +1833,9 @@ export class Street extends Phaser.Scene {
 		if (this.curbSpriteTwo) this.curbSpriteTwo.height = newHeight;
 		if (!this.noHousesArea) {
 			this.houseCurb.height = newHeight;
+			if (this.ticker == "SOLANA") this.houseCurb.height = newHeight+ toRes(30000);
 			if (this.houseCurbTwo) {
-				this.houseCurbTwo.height = newHeight;
+				this.houseCurbTwo.height = newHeight+ toRes(30000);
 			}
 		}
 	}
