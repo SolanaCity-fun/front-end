@@ -1798,7 +1798,7 @@ export const CELO = {
 			title: () => {
 				return i18n.t("celo.medianFee-usdTransfer");
 			},
-			signTitle: "Median Transfer Fee",
+			signTitle: "Seqno",
 			after: " USD",
 			before: "~$",
 			value: 0.0003,
