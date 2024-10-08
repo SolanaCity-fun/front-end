@@ -113,7 +113,7 @@ export default class SOLANAStreet extends Street {
         });
 		if(this.adjustView){this.checkSideAddSign(this.mySide);}
 
-		this.createAvatar();
+		//this.createAvatar();
 
 
 		// await console.log("this.streetCreate()", this.streetCreate());

@@ -609,6 +609,7 @@ export default class ETHStreet extends Street {
 		let toMove = {};
 		if (!this.vue.isConnected) return false;
 		let activeBusesBefore = this.activeBuses(false);
+		eventHub.$emit("myFirstBusPos", { busX:activeBusesBefore[0].x , busY:activeBusesBefore[0].y });
 		let nonEmptyBuses = [];
 		for (let i = 0; i < activeBusesBefore.length; i++) {
 			const bus = activeBusesBefore[i];
