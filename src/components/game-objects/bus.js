@@ -16,7 +16,7 @@ const Bus = new Phaser.Class({
 		this.hasBridgeTransaction = false;
 		this.onSide = "";
 		this.busRightBridgeStartPoint = this.scene.scale.width;
-        this.myBridgeStop = 800;
+        this.myBridgeStop = toRes(800);
 		this.myOutofScreenStop = -500 - this.busHeight;
 		this.drawers = {};
 		this.drawersUsed = {};
@@ -479,7 +479,7 @@ Bus.prototype.leaveTween = function () {
         console.log(this.bridgTxs);
 		this.movingTween = this.scene.add.tween({
 			targets: [this],
-			y: toRes(this.myBridgeStop),
+			y: this.myBridgeStop,
 			ease: "Cubic.easeIn",
 			duration: duration,
 			onStart: () => {
