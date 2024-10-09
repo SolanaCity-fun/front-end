@@ -350,6 +350,7 @@ export class Street extends Phaser.Scene {
 			this.lineManager[hash].txData.bh = block.hash;
 
 			if (this.removeFollower(hash, 2000)) {
+				console.log({block})
 				//successfully confirmed followed transaction
 				window.mainVue.$toast.success(
 					{

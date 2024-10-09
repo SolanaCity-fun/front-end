@@ -239,7 +239,8 @@ export default Vue.extend({
 			//set recent block timeago
 			if (this.blockchainLength > 0) {
 				let recentBlock = this.coinConfig.liveBlocks[this.coinConfig.liveBlocks.length - 1];
-				let recentBlockTime = recentBlock.time;
+				console.log({recentBlock});
+				let recentBlockTime = recentBlock.time ?? recentBlock.inserted;
 				let recent = fds(recentBlockTime * 1000, new Date(), {
 					roundingMethod: "floor",
 					addSuffix: true,

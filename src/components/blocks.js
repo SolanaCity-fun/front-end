@@ -130,7 +130,9 @@ class blockFactory extends EventEmitter {
 		data.hoursPast = 0;
 		data.uncle = false;
 
-		data.minerTime = data.time;
+		
+		data.minerTime = data.time ?? data.timestamp ?? data.inserted;
+		console.log({addblock: data});
 		if (data.inserted) {
 			if (Math.abs(data.time - data.inserted) < 300 && data.inserted > data.time) data.time = data.inserted;
 		}

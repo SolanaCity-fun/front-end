@@ -2764,7 +2764,7 @@ export const commonTitleOverrides = {
 
 export const enabledConfig = {
 	ETH,
-	// SOLANA,
+	SOLANA,
 	BTC,
 	DASH,
 	// BCH,
@@ -2772,7 +2772,7 @@ export const enabledConfig = {
 	// LTC,
 	//ARBI,
 	// MANTA,
-	CELO,
+	// CELO,
 	LUKSO,
 };
 
