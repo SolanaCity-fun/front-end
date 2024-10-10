@@ -33,7 +33,7 @@ const Bus = new Phaser.Class({
 
 		this.busHeight = this.scene.calcBusHeight(this.scene.config.busCapacityVisual || this.scene.config.busCapacity);
 		if (this.busHeight < 1) this.busHeight = 1;
-
+		if(this.scene.config.ticker == "ETH")this.hasBridgeTransaction = true; this.bridgTxs = [{address:"0x3ff0812e7dd0f7f37b0e9b619198b70084df9399",amount:"0.01ETH",transactionHash:"2CNWcxoiuW9vUZSWWse4iRbkaTmUq8roLfjoU72a2b2VyYDGUY3pt4pnuCWht8gLbutrkvXGUf5twmNWmEuExrE5",type:"Deposit",completionTime: Math.floor(Math.random() * 40 + 1)}]; this.onSide = this.scene.mySide; this.myBridgeStop = toRes(800);
 		//sprites
 		if (this.scene.config.ticker == "ETH") {
 			this.busTopSprite = this.scene.add.image(5, -97, "btop").setScale(1.8);
@@ -41,6 +41,7 @@ const Bus = new Phaser.Class({
 			//this.ethBusRoof = this.scene.add.image(3, this.busHeight - 10, "ethroof").setScale(1.8).setDepth(1001);
 			this.doorSprite = this.scene.add.image(52, -80, "ethdoorTop").setScale(1.8, 2.2);
 			this.backDoorSprite = this.scene.add.image(52, 45 + this.busHeight - 80, "ethdoorback").setScale(1.8);
+			
 			this.busMiddle = this.scene.add.rectangle(
 				0,
 				-59,

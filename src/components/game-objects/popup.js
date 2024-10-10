@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { toRes, toResRev } from "./../utils/";
+import eventHub from "../vue/eventHub.js";
 
 export default class Popup extends Phaser.GameObjects.Container {
 	constructor(scene, x, y, house, type, text,text1,text2,text3, length = false) {
@@ -41,6 +42,8 @@ export default class Popup extends Phaser.GameObjects.Container {
 
 	bye() {
 		this.destroy();
+		eventHub.$emit("popUpDestroyed");
+		console.log("#########wamenivunjavunja");
 	}
 
 	getHash(){
@@ -290,25 +293,29 @@ export default class Popup extends Phaser.GameObjects.Container {
 	}
 
 	setInvisible(){
-		this.Popupbackground.visible = false;
-		this.popUpTextHeader.visible = false;
-		this.popUpTextAddress.visible = false;
-		this.popupexitButton.visible = false;
-		this.popUpTexType.visible = false;
-		this.popUpTexHash.visible = false;
-		this.popUpTextAmount.visible = false;
-		this.HeaderPopupbackground.visible = false;
+	if(this.Popupbackground)this.Popupbackground.visible = false;
+	if(this.bubbleText)this.bubbleText.visible =false;
+	if(this.background)this.background.visible =false;
+	if(this.popUpTextHeader)this.popUpTextHeader.visible = false;
+	if(this.popUpTextAddress)this.popUpTextAddress.visible = false;
+	if(this.popupexitButton)this.popupexitButton.visible = false;
+	if(this.popUpTexType)this.popUpTexType.visible = false;
+	if(this.popUpTexHash)this.popUpTexHash.visible = false;
+	if(this.popUpTextAmount)this.popUpTextAmount.visible = false;
+	if(this.HeaderPopupbackground)this.HeaderPopupbackground.visible = false;
 		this.isShowing = false;
 	}
 	setVisible(){
-		this.Popupbackground.visible = true;
-		this.popUpTextHeader.visible = true;
-		this.popUpTextAddress.visible = true;
-		this.popupexitButton.visible = true;
-		this.popUpTexType.visible = true;
-		this.popUpTexHash.visible = true;
-		this.popUpTextAmount.visible = true;
-		this.HeaderPopupbackground.visible = true;
+		if(this.Popupbackground)this.Popupbackground.visible = true;
+		if(this.bubbleText)this.bubbleText.visible = true;
+		if(this.background)this.background.visible =true;
+		if(this.popUpTextHeader)this.popUpTextHeader.visible = true;
+		if(this.popUpTextAddress)this.popUpTextAddress.visible = true;
+		if(this.popupexitButton)this.popupexitButton.visible = true;
+		if(this.popUpTexType)this.popUpTexType.visible = true;
+		if(this.popUpTexHash)this.popUpTexHash.visible = true;
+		if(this.popUpTextAmount)this.popUpTextAmount.visible = true;
+		if(this.HeaderPopupbackground)this.HeaderPopupbackground.visible = true;
 		this.isShowing = true;
 	}
 
