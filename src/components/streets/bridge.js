@@ -7,6 +7,7 @@ import { ETH,charConfig ,config} from "../config.js";
 import Bus from "../game-objects/bus.js";
 import Person from "../game-objects/person";
 import Popup from "../game-objects/popup";
+import Avatar from "../game-objects/avatar";
 // import sideCtor from "../vue/SideController.vue";
 //import { Street } from "../street.js";
 export default class bridge extends Phaser.Scene {
@@ -22,6 +23,8 @@ export default class bridge extends Phaser.Scene {
        this.lineManager = {};
        this.sizeVar = "g";
        this._appleTest = new AppleTest();
+       this.myAvatarBusX ;
+       this.myAvatarBusY ;
 	}
 
 	init() {
@@ -65,6 +68,7 @@ export default class bridge extends Phaser.Scene {
     this.createBridgeButton();
     this.cameras.main.scrollY=toRes(1300)
     this.myBridge =  this.add.image(toRes(960), toRes(500), "BRIDGE").setVisible(false).setScale(toRes(1));
+    this.createAvatar();
     eventHub.$on("myScrollData",(mydata)=>{
    if(this.cameras.main){ this.cameras.main.scrollY=mydata.cameraY;}
     this.myBridge.setVisible(true);
@@ -80,7 +84,20 @@ export default class bridge extends Phaser.Scene {
        this.myPersonData = myData.myPersonData;
       console.log("changed");
     });
-    
+
+    eventHub.$on("myFirstBusPos",(myBusPos)=>{
+        this.myAvatarBusX = myBusPos.busX;
+        this.myAvatarBusY = myBusPos.busY;
+       console.log("changed");
+     });
+
+     eventHub.$on("avatarEnterBus",()=>{
+     
+     
+    if(this.Avatar)this.avatarEnterBus();
+
+     });
+
     eventHub.$on("AlightBridge",(mypos)=>{
         let myX = mypos.myStartX;
        let  myY = mypos.myStartY;
@@ -226,7 +243,7 @@ export default class bridge extends Phaser.Scene {
             this.myPerson.y = this.myBridge.y;
             this.myPerson.active = true;
             this.myPerson.visible = true;
-            let mySkinSpriteNo = data.txData.spriteNo;
+            let mySkinSpriteNo = 2;
             console.log(mySkinSpriteNo);
             this.myPerson.customResetData();
 
@@ -314,6 +331,36 @@ export default class bridge extends Phaser.Scene {
 
     }
 
+
+    createAvatar() {
+		console.log("##########notcreatedAvatar");
+		this.Avatar = new Avatar(this,"left", 250, 300, "person-19.png");
+		this.Avatar.setupControls(this);
+		console.log("##########createdAvatar");
+
+	}
+
+    avatarEnterBus(){
+
+        this.Avatar.myAvatar.setFlipX(true);
+		this.Avatar.myAvatar.anims.play("walk_side_2", true);
+
+        this.add.tween({
+            targets: this.Avatar,
+            x: toRes(530),
+            y: toRes(800),
+            //scale:toRes(0.3), 
+            alpha:0,
+            ease: "Linear",
+            duration: 1000, 
+            onComplete: () => {
+              
+                
+            }
+        });
+
+    }
+
     createmyBridgeBus() {
 
    
@@ -366,7 +413,7 @@ export default class bridge extends Phaser.Scene {
 		return (20 / 1000000) * 195 - 115;
 	}
     update() {
-
+        if(this.Avatar)this.Avatar.updateAvatarPopUp();
         for (let i = 0; i < this.movingPeople.length; i++) {
             let person = this.movingPeople[i];
             let popup = this.popUps[i];

@@ -168,8 +168,8 @@ console.log(this.mySide)
 
 	setAdjustCrowdPos(mycrowdBool)
 	{
- this.adjustCrowdPos = mycrowdBool
- console.log('******************TUMEPATA NI****** ',mycrowdBool);
+      this.adjustCrowdPos = mycrowdBool
+ 
 	}
 
 	setView(view){
@@ -573,7 +573,6 @@ console.log(this.mySide)
 
 	//go through list
 	sortBuses(instant = false, hashArray = false) {
-		console.log("sfjslkjf;lkasjfklja")
 		if (!hashArray) hashArray = this.sortedLineHashes(false);
 		for (let i = 0; i < hashArray.length; i++) {
 			hashArray[i].txData.dependingOn = false;
