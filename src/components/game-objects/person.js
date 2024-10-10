@@ -65,7 +65,7 @@ Person.prototype.goAlongPath = function(mySkin,side,walkTime){
 				this.scene.tweens.add({
 				targets:tweenPath,
 				t:1,
-				duration:walkTime*1000,
+				duration:walkTime*10,
 				ease:'Cubic',
 				repeat:0,
 				yoyo:false,
