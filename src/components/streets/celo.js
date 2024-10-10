@@ -387,7 +387,7 @@ export default class CELOStreet extends Street {
 		let target = this.getGasTarget();
 		for (let i = activeBuses.length - 1; i >= 0; i--) {
 			this.calcBusFees(activeBuses, i);
-			activeBuses[i].feeText2 = "Tx " + 3;
+			activeBuses[i].feeText2 = 61577 + " TON";
 			let busId = activeBuses[i].getData("id");
 			if (foundLoaded || nonEmptyBuses.includes(busId) || activeBuses[i].tx.length > 0) {
 				foundLoaded = true;
