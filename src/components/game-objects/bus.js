@@ -16,7 +16,7 @@ const Bus = new Phaser.Class({
 		this.hasBridgeTransaction = false;
 		this.onSide = "";
 		this.busRightBridgeStartPoint = this.scene.scale.width;
-		this.myBridgeStop = toRes(800);
+		this.myBridgeStop = toRes(1200);
 		this.myOutofScreenStop = -500 - this.busHeight;
 		this.drawers = {};
 		this.drawersUsed = {};
@@ -33,8 +33,8 @@ const Bus = new Phaser.Class({
 
 		this.busHeight = this.scene.calcBusHeight(this.scene.config.busCapacityVisual || this.scene.config.busCapacity);
 		if (this.busHeight < 1) this.busHeight = 1;
-		if(this.scene.config.ticker == "ETH")this.hasBridgeTransaction = true; this.bridgTxs = [{address:"0x3ff0812e7dd0f7f37b0e9b619198b70084df9399",amount:"0.01ETH",transactionHash:"2CNWcxoiuW9vUZSWWse4iRbkaTmUq8roLfjoU72a2b2VyYDGUY3pt4pnuCWht8gLbutrkvXGUf5twmNWmEuExrE5",type:"Deposit",completionTime: 5}]; this.onSide = this.scene.mySide; this.myBridgeStop = toRes(800);
-		if(this.scene.config.ticker == "CELO")this.hasBridgeTransaction = true; this.bridgTxs = [{address:"0x3ff0812e7dd0f7f37b0e9b619198b70084df9399",amount:"0.01TON",transactionHash:"2CNWcxoiuW9vUZSWWse4iRbkaTmUq8roLfjoU72a2b2VyYDGUY3pt4pnuCWht8gLbutrkvXGUf5twmNWmEuExrE5",type:"Deposit",completionTime: 5}]; this.onSide = this.scene.mySide; this.myBridgeStop = toRes(800);
+		if(this.scene.config.ticker == "ETH")this.hasBridgeTransaction = true; this.bridgTxs = [{address:"0x3ff0812e7dd0f7f37b0e9b619198b70084df9399",amount:"0.01ETH",transactionHash:"2CNWcxoiuW9vUZSWWse4iRbkaTmUq8roLfjoU72a2b2VyYDGUY3pt4pnuCWht8gLbutrkvXGUf5twmNWmEuExrE5",type:"Deposit",completionTime: 5}]; this.onSide = this.scene.mySide; this.myBridgeStop = toRes(1100);
+		if(this.scene.config.ticker == "CELO")this.hasBridgeTransaction = true; this.bridgTxs = [{address:"0x3ff0812e7dd0f7f37b0e9b619198b70084df9399",amount:"0.01TON",transactionHash:"2CNWcxoiuW9vUZSWWse4iRbkaTmUq8roLfjoU72a2b2VyYDGUY3pt4pnuCWht8gLbutrkvXGUf5twmNWmEuExrE5",type:"Deposit",completionTime: 5}]; this.onSide = this.scene.mySide; this.myBridgeStop = toRes(1100);
 		//sprites
 		if (this.scene.config.ticker == "ETH") {
 			this.busTopSprite = this.scene.add.image(5, -97, "btop").setScale(1.8);
