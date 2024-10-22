@@ -1,23 +1,32 @@
 import { Street } from "../street.js";
+import Phaser from "phaser";
 // import { toRes, ethNewTxSetDepending } from "../utils/";
-// import { mirrorX, toRes, ethNewTxSetDepending, getSheetKey } from "../utils/";
+import { mirrorX, getSheetKey } from "../utils/";
 import { toRes, ethNewTxSetDepending } from "../utils/";
 import { SOLANA, ethUnits } from "../config.js";
 import i18n from "../../i18n";
 import eventHub from "../vue/eventHub.js";
 import state from "../../wallet";
+import solBus from "../game-objects/solBus.js";
 // import Popup from "../game-objects/popup";
 
 export default class SOLANAStreet extends Street {
 	constructor(side) {
 		super(SOLANA, side);
+		this.mySide = side;
+		this.myBuses = [];
 	}
 
 	init() {
 		this.foundBoarding = false;
-		this.busStop = toRes(200);
+		//this.busStop = toRes(200);
+		this.myMainCameraPosition = 1300;
 		this.busDoorFromTop = toRes(42);
 		this.personPixelsPerSecond = 5;
+		this.bridgeTx = [];
+		this.busCount = 294758986; // Start bus number
+		this.mysolbcount = 0;
+
 		this.decelerationArea = 500;
 		this.sceneHeight = toRes(10000);
 		let walkingLaneOffset = 10 * this.tileSize;
@@ -91,8 +100,22 @@ export default class SOLANAStreet extends Street {
 	async create() {
 		super.create();
 		this.addressNonces = this.config.addressNonces;
-
+		if (this.adjustView) {
+			this.cameras.main.scrollY = toRes(1300);
+		}
 		this.streetCreate();
+		//this.mySolBus = new solBus(this,"294758986","5 Gwei","+0 wei");
+        // this.busTimer = this.time.addEvent({
+        //     delay: 600, // 1 second interval between myBuses
+        //     callback: ()=>{if(this.myBuses)this.spawnBus();},
+        //     callbackScope: this,
+        //     loop: true
+        // });
+		if(this.adjustView){this.checkSideAddSign(this.mySide);}
+
+		//this.createAvatar();
+
+
 		// await console.log("this.streetCreate()", this.streetCreate());
 		this.vue.navigation.unshift({
 			key: "characters",
@@ -126,10 +149,217 @@ export default class SOLANAStreet extends Street {
 			}),
 			this.solanaBuses();
 		this.createPeople();
+
 		eventHub.$on(this.ticker + "-follow", (address) => {
 			this.followAddress(address);
 		});
+		eventHub.$on("scrollToBridge", () => {
+			this.scrollToBridge();
+		});
+		eventHub.$on("stopSignAdjustwithBridge", () => {
+			this.adjustBusHeight = true;
+			this.checkSideAddSign(this.mysetSide);
+		});
+		eventHub.$on("stopSignAdjust", () => {
+			if (this.myBridgeRoadSign) {
+				this.myBridgeRoadSign.destroy();
+			}
+		});
+		eventHub.$on("SolanaBridgeTx", (bridgeTxData) => {
+			this.addBridgeTx(bridgeTxData);
+		});
 		if (state.address) this.followAddress(state.address);
+		this.stoplight.setLight("green");
+	}
+
+	createIsabella() {
+		this.isabella = this.add.image(
+			mirrorX(700, this.side),
+			toRes(160),
+			getSheetKey("isabella-0.png"),
+			"isabella-0.png"
+		);
+		this.isabella.setDisplaySize(toRes(64), toRes(64));
+		this.isabella.setInteractive({ useHandCursor: true });
+		this.isabella.on("pointerup", () => {
+			this.cycleIsaMessage();
+		});
+		this.isabella.setDepth(this.personDepth);
+		this.isabella.messages = [
+			"Welcome to Monero Street! I'm Isabella.",
+			"Are you an angel or is that a ring signature on your head?",
+			"Why do we all look the same? We represent Monero's fungibility and privacy!",
+			"That bus will automatically get larger in the future when the street gets busy. Monero has a dynamic block size limit.",
+			"Don't ask where we come from. Without a sender's view key, it's impossible to see addresses associated with a transaction.",
+		];
+		this.cycleIsaMessage();
+	}
+
+
+	spawnBus(){
+		let busNumber = this.busCount++;
+        let randomGwei = Phaser.Math.Between(0, 10); // Random Gwei value between 0 and 10
+        let gweiString = `${randomGwei}k Lam`;
+
+        // Create the bus using your existing solBus class
+        let bus = new solBus(this, busNumber.toString(), gweiString, "+0 lam",false);
+
+		let busTwo = new solBus(this, busNumber.toString(), gweiString, "+0 lam",true);
+        
+        // Add the bus to an array or group to keep track of them
+        this.myBuses.push(bus);
+		this.myBuses.push(busTwo);
+		this.mysolbcount++;
+		// bus.y = bus.y + (this.mysolbcount*200);
+		// busTwo.y = busTwo.y + (this.mysolbcount*300);
+        // Position the bus and animate its movement upwards
+       // bus.container.setPosition(400, 600); // Set the initial position (adjust as needed)
+        
+
+            this.add.tween({
+                targets: bus,
+                y: -500, // Move the bus off-screen
+				ease: "Linear",
+				delay:1500 ,
+                duration: 20000, // Adjust as needed for speed
+                onComplete: () => {
+                    // Remove bus from array and destroy container after moving off-screen
+                   //this.myBuses[i].destroy(); 
+                    this.myBuses.splice(0, 1); // Remove the bus from the array
+                }
+            });
+
+			this.add.tween({
+                targets: busTwo,
+                y: -500, // Move the bus off-screen
+				ease: "Linear",
+				delay:2500 ,
+                duration: 20000, // Adjust as needed for speed
+                onComplete: () => {
+                    // Remove bus from array and destroy container after moving off-screen
+                   //this.myBuses[i].destroy(); 
+                    this.myBuses.splice(0, 1); // Remove the bus from the array
+                }
+            });
+        
+        
+
+        // Log the bus details for debugging
+       // console.log(`Bus ${busNumber}, ${gweiString}`);
+    
+
+	}
+
+	setBusStop(stop){
+		this.busStop = toRes(stop);
+	}
+
+	adjustMyView(mybool) {
+		this.adjustView = mybool;
+	}
+
+	setView(view) {
+		this.cameras.main.scrollY = toRes(view);
+	}
+
+	addBridgeTx(myBridgeTxData) {
+		this.bridgeTx.push(myBridgeTxData);
+		console.log(this.bridgeTx);
+	}
+	setSide(side) {
+		this.mysetSide = side;
+	}
+
+	checkSideAddSign(side) {
+		console.log("###############", side);
+
+		if (this.myBridgeRoadSign) {
+			this.myBridgeRoadSign.destroy();
+		}
+
+		if (side == "left") {
+			this.myBridgeRoadSign = this.add.image(toRes(865), toRes(800), "BRIDGESIGN").setScale(toRes(1));
+		} else {
+			this.myBridgeRoadSign = this.add.image(toRes(97), toRes(800), "BRIDGESIGN").setScale(toRes(1));
+		}
+	}
+	scrollToBridge() {
+		setInterval(() => {
+			if (this.myMainCameraPosition > 0) {
+				this.myMainCameraPosition -= 10;
+				this.cameras.main.scrollY = this.myMainCameraPosition;
+			}
+		}, 20);
+	}
+
+	// generateLine(value) {
+	// 	setTimeout(() => {
+	// 		let boardingSide = this.side == "left" || this.side == "full" ? this.curbX - 1 : this.curbX + 1;
+	// 		let oppositeSide =
+	// 			this.side == "left" || this.side == "full"
+	// 				? this.walkingLane + toRes(32)
+	// 				: this.walkingLane - toRes(32);
+	// 		let xSeperator = toRes(17);
+	// 		let ySeperator = toRes(17);
+	// 		let row = 0;
+	// 		let column = 0;
+
+	// 		this.lineStructure = [];
+	// 		for (let i = 0; i < value; i++) {
+	// 			let addedX = column * xSeperator + Math.random() * toRes(20);
+	// 			let addedY = row * ySeperator + Math.random() * toRes(20);
+	// 			let x = Math.round(boardingSide + (this.side == "left" || this.side == "full" ? -addedX : addedX));
+	// 			let y = Math.round(this.busStop + addedY);
+	// 			this.lineStructure.push([x, y]);
+	// 			// if(this.adjustCrowdPos){
+	// 			// 	this.lineStructure.push([x, y+toRes(100)]);
+	// 			// 	// this.onceAdjust = true;
+	// 			// //	console.log("##################adjustTrue#####################")
+	// 			// }
+	// 			// if(this.adjustCrowdPos === false){
+
+	// 			// 	this.lineStructure.push([x, y+toRes(100)]);
+	// 			// 	// if(this.onceAdjust){
+	// 			// 	// 	this.lineStructure.push([x, y-toRes(1300)]);
+	// 			// 	// 	this.onceAdjust = false;
+	// 			// 	// }else{
+	// 			// 	// 	this.lineStructure.push([x, y]);
+	// 			// 	// }
+	// 			// 	//console.log("##################adjustFalse#####################")
+
+	// 			// }
+	// 			// if(this.adjustCrowdPos === undefined){
+
+	// 			// 	//console.log("##################UNDEFFFF#####################")
+	// 			// }
+
+	// 			column++;
+	// 			if (
+	// 				column >= this.peoplePerRow(row) ||
+	// 				((this.side == "left" || this.side == "full") && x < oppositeSide) ||
+	// 				(this.side == "right" && x > oppositeSide)
+	// 			) {
+	// 				row++;
+	// 				column = 0;
+	// 			}
+	// 		}
+	// 	}, 30);
+	// }
+
+	setCrowdY(y) {
+		if (y === this.crowd.rawY) return false;
+		if (y < this.crowd.rawY) {
+			this.crowd.changeLowerCount++;
+			if (this.crowd.changeLowerCount < 10) return false;
+		}
+		this.crowd.changeLowerCount = 0;
+		this.crowd.y = y + toRes(100);
+		this.crowd.rawY = y;
+		if (this.crowd.y < toRes(1000)) this.crowd.y = toRes(1000);
+		this.crowd.y = Math.ceil(this.crowd.y / toRes(50)) * toRes(50);
+		this.crowdSign.y = this.crowd.y - toRes(30);
+		this.crowdSign.x = this.crowd.x;
+		this.checkView();
 	}
 
 	crowdCountDisplay() {
@@ -309,6 +539,7 @@ export default class SOLANAStreet extends Street {
 
 	//go through list
 	sortBuses(instant = false, hashArray = false) {
+		
 		if (!hashArray) hashArray = this.sortedLineHashes(false);
 		for (let i = 0; i < hashArray.length; i++) {
 			hashArray[i].txData.dependingOn = false;
@@ -326,6 +557,18 @@ export default class SOLANAStreet extends Street {
 			const bus = activeBusesBefore[i];
 			if (bus.tx.length > 0) nonEmptyBuses.push(bus.getData("id"));
 		}
+		if(this.adjustBusHeight){
+
+			let mybuses = this.activeBuses(false);
+
+			for (let i = 0; i < mybuses.length; i++) {
+
+				mybuses[i].y =this.busStop +toRes(140) + toRes(180*i);
+				mybuses[i].busFloor.y =mybuses[i].y - toRes(100);
+			}
+			this.adjustBusHeight = false;
+
+		}
 
 		let activeBuses = this.activeBuses();
 
@@ -338,6 +581,13 @@ export default class SOLANAStreet extends Street {
 			}
 			bus.baseFee = this.calcBusBaseFee(activeBuses, i);
 			bus.feeText = ethUnits(bus.baseFee, true, true);
+				// to enable visualistion of bridge transaction currently a test and should be more dyanmic if block has bridge transaction
+				if (this.bridgeTx.length >= 1){
+					bus.bridgTxs.push(...this.bridgeTx)
+					this.bridgeTx.splice(0,this.bridgeTx.length);
+					bus.hasBridgeTransaction = true;
+				}
+				bus.onSide = this.mySide;
 			this.addBusTxs(bus, hashArray, skipTxs, instant, increasingNonces, toMove);
 		}
 
@@ -411,7 +661,7 @@ export default class SOLANAStreet extends Street {
 		this.updateAllBusPercent(activeBuses);
 
 		this.vue.sortedCount++;
-		this.busInside();
+		this.busInside(); 
 	}
 
 	calcBusHeight(/*size*/) {

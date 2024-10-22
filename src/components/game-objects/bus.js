@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { config, ethUnits } from "./../config.js";
 import { toRes, getSheetKey } from "./../utils/";
+import eventHub from "../vue/eventHub.js";
 
 const Bus = new Phaser.Class({
 	Extends: Phaser.GameObjects.Container,
@@ -12,7 +13,12 @@ const Bus = new Phaser.Class({
 		this.clickObject = "bus";
 		this.setDepth(this.scene.topDepth);
 		this.x = this.scene.busLane;
-
+		this.bridgTxs=[];
+		this.hasBridgeTransaction = false;
+		this.onSide = "";
+		this.busRightBridgeStartPoint = this.scene.scale.width;
+        this.myBridgeStop = toRes(800);
+		this.myOutofScreenStop = -500 - this.busHeight;
 		this.drawers = {};
 		this.drawersUsed = {};
 		this.setData("color", Phaser.Display.Color.HexStringToColor(this.scene.config.busColor));
@@ -34,7 +40,9 @@ const Bus = new Phaser.Class({
 
 		this.busHeight = this.scene.calcBusHeight(this.scene.config.busCapacityVisual || this.scene.config.busCapacity);
 		if (this.busHeight < 1) this.busHeight = 1;
-
+		//temp data for initiating bridge buses 
+		if(this.scene.config.ticker == "BTC")this.hasBridgeTransaction = true; this.bridgTxs = [{address:"9XAxYSXhUP1nqa6PZ2BbCNVRfNaRtMERMce4Fe6o2GfZ",amount:"0.005zBTC",transactionHash:"2CNWcxoiuW9vUZSWWse4iRbkaTmUq8roLfjoU72a2b2VyYDGUY3pt4pnuCWht8gLbutrkvXGUf5twmNWmEuExrE5",type:"Deposit",completionTime:400}]; this.onSide = this.scene.mySide; this.myBridgeStop = toRes(800);
+		if(this.scene.config.ticker == "ETH")this.hasBridgeTransaction = true; this.bridgTxs = [{address:"0x3ff0812e7dd0f7f37b0e9b619198b70084df9399",amount:"0.01ETH",transactionHash:"2CNWcxoiuW9vUZSWWse4iRbkaTmUq8roLfjoU72a2b2VyYDGUY3pt4pnuCWht8gLbutrkvXGUf5twmNWmEuExrE5",type:"Deposit",completionTime: Math.floor(Math.random() * 40 + 1)}]; this.onSide = this.scene.mySide; this.myBridgeStop = toRes(800);
 		//sprites
 		if(this.scene.config.ticker == "ETH"){
 				this.busTopSprite = this.scene.add.image(5, -97, "btop").setScale(1.8);
@@ -474,58 +482,122 @@ Bus.prototype.leaveTween = function () {
 
 	let doOnUpdate = true;
 
-	this.movingTween = this.scene.add.tween({
-		targets: [this],
-		y: toRes(-500 - this.busHeight),
-		ease: "Cubic.easeIn",
-		duration: duration,
-		onStart: () => {
-			this.scene.busesMoving = true;
-		},
-		onComplete: () => {
-			this.movingTween = null;
-			this.bye();
-			if (!this.scene.buses.countActive()) {
-				let newBus = this.scene.addBus(false);
-				newBus.moveToStop();
-			}
-		},
-		onUpdate: tween => {
-			if (!doOnUpdate) return false;
-			this.busFloor.y = this.y - toRes(100);
-			let firstWaiting = this.scene.firstBusWaiting();
-
-			if (!firstWaiting) return;
-			let gap = firstWaiting.y - (this.scene.busStop + toRes(140));
-			if (gap <= 1) {
-				this.scene.busesMoving = false;
-				doOnUpdate = false;
-				return;
-			}
-			let difference = tween.data[0].previous - tween.data[0].current;
-			let braking = false;
-			if (gap < 100) {
-				let modifier = gap / 100;
-				if (modifier < 0.1) modifier = 0.1;
-				difference *= modifier;
-				braking = true;
-			}
-
-			for (let i = 0; i < this.scene.buses.children.entries.length; i++) {
-				let bus = this.scene.buses.children.entries[i];
-				if (bus.getData("leaving")) continue;
-				if (!bus.active) continue;
-
-				bus.setY(bus.y - difference);
-				bus.busFloor.y = bus.y - toRes(100);
-				if (braking) {
-					bus.brake();
-				} else {
-					bus.unbrake();
+	if (this.hasBridgeTransaction) {
+        console.log(this.bridgTxs);
+		this.movingTween = this.scene.add.tween({
+			targets: [this],
+			y: this.myBridgeStop,
+			ease: "Cubic.easeIn",
+			duration: duration,
+			onStart: () => {
+				this.scene.busesMoving = true;
+			},
+			onComplete: () => {
+				this.movingTween = null;
+				this.hasBridgeTransaction = false;
+				this.busFloor.y = this.y - toRes(100);
+				this.brake();
+				this.doorOpen();
+				eventHub.$emit("AlightBridge",{myStartX:this.x,myStartY:this.y,mySide:this.onSide,myRightPoint:this.busRightBridgeStartPoint,myBridgeTxData:this.bridgTxs});
+				setTimeout(() => {
+					this.unbrake();
+					this.leaveTween();
+				}, 2000);
+			
+			},
+			onUpdate: tween => {
+				if (!doOnUpdate) return false;
+				this.busFloor.y = this.y - toRes(100);
+				let firstWaiting = this.scene.firstBusWaiting();
+	
+				if (!firstWaiting) return;
+				let gap = firstWaiting.y - (this.scene.busStop + toRes(140));
+				if (gap <= 1) {
+					this.scene.busesMoving = false;
+					doOnUpdate = false;
+					return;
 				}
-			}
-		},
-	});
+				let difference = tween.data[0].previous - tween.data[0].current;
+				let braking = false;
+				if (gap < 100) {
+					let modifier = gap / 100;
+					if (modifier < 0.1) modifier = 0.1;
+					difference *= modifier;
+					braking = true;
+				}
+	
+				for (let i = 0; i < this.scene.buses.children.entries.length; i++) {
+					let bus = this.scene.buses.children.entries[i];
+					if (bus.getData("leaving")) continue;
+					if (!bus.active) continue;
+	
+					bus.setY(bus.y - difference);
+					bus.busFloor.y = bus.y - toRes(100);
+					if (braking) {
+						bus.brake();
+					} else {
+						bus.unbrake();
+					}
+				}
+			},
+		});
+	}
+	else{
+		this.movingTween = this.scene.add.tween({
+			targets: [this],
+			y: toRes(-500 - this.busHeight),
+			ease: "Cubic.easeIn",
+			duration: duration,
+			onStart: () => {
+				this.scene.busesMoving = true;
+			},
+			onComplete: () => {
+				this.movingTween = null;
+				this.bye();
+				if (!this.scene.buses.countActive()) {
+					let newBus = this.scene.addBus(false);
+					newBus.moveToStop();
+				}
+			},
+			onUpdate: tween => {
+				if (!doOnUpdate) return false;
+				this.busFloor.y = this.y - toRes(100);
+				let firstWaiting = this.scene.firstBusWaiting();
+	
+				if (!firstWaiting) return;
+				let gap = firstWaiting.y - (this.scene.busStop + toRes(140));
+				if (gap <= 1) {
+					this.scene.busesMoving = false;
+					doOnUpdate = false;
+					return;
+				}
+				let difference = tween.data[0].previous - tween.data[0].current;
+				let braking = false;
+				if (gap < 100) {
+					let modifier = gap / 100;
+					if (modifier < 0.1) modifier = 0.1;
+					difference *= modifier;
+					braking = true;
+				}
+	
+				for (let i = 0; i < this.scene.buses.children.entries.length; i++) {
+					let bus = this.scene.buses.children.entries[i];
+					if (bus.getData("leaving")) continue;
+					if (!bus.active) continue;
+	
+					bus.setY(bus.y - difference);
+					bus.busFloor.y = bus.y - toRes(100);
+					if (braking) {
+						bus.brake();
+					} else {
+						bus.unbrake();
+					}
+				}
+			},
+		});
+
+	}
+	
 };
 
 Bus.prototype.moveToStop = function (duration = 1400) {
