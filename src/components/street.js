@@ -1444,7 +1444,7 @@ export class Street extends Phaser.Scene {
 				callback: () => {
 					if (this.stoplight.currentColor == "yellow") {
 						this.setRedLight = null;
-						this.stoplight.setLight("red");
+						if(this.ticker == "SOLANA"){this.stoplight.setLight("green");}else{this.stoplight.setLight("red");}
 					}
 				},
 			});
