@@ -162,7 +162,7 @@
         "mfpg": "@:eth.mfpg",
         "mpfpg": "@:eth.mpfpg",
         "type": "@:eth.type",
-        "lastBlock": "@:btc.lastBlock",
+        "lastBlock": "NOW",
         "marketCap-usd": "@:btc.marketCap-usd",
         "medianBlockSize": "@:btc.medianBlockSize",
         "medianBlockTime": "@:btc.medianBlockTime",

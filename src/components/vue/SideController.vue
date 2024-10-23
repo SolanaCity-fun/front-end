@@ -238,6 +238,7 @@ export default Vue.extend({
 			//now will change every second
 			//set recent block timeago
 			if (this.blockchainLength > 0) {
+				console.log({coinConfig: this.coinConfig});
 				let recentBlock = this.coinConfig.liveBlocks[this.coinConfig.liveBlocks.length - 1];
 				console.log({recentBlock});
 				let recentBlockTime = recentBlock.time ?? recentBlock.inserted;

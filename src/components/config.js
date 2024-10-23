@@ -1124,7 +1124,7 @@ export const SOLANA = {
 		signArray: {
 			title: "Sign Display",
 			type: "multiselect",
-			value: ["lastBlock", "medianFee-usdTransfer", "mempool-size"],
+			value: ["medianFee-usdTransfer"],
 			writable: true,
 			invisible: true,
 			restart: false,
@@ -1625,8 +1625,8 @@ export const LUKSO = {
 //#ffe599
 export const CELO = {
 	ticker: "CELO",
-	coinName: "SOLANA",
-	color: "000000",
+	coinName: "CELO",
+	color: "ffe599",
 	busColor: "ffe599",
 	busCapacity: 0,
 	feeVar: "gp",
@@ -2766,14 +2766,14 @@ export const enabledConfig = {
 	ETH,
 	SOLANA,
 	BTC,
-	DASH,
+	// DASH,
 	// BCH,
 	// XMR,
 	// LTC,
 	//ARBI,
 	// MANTA,
 	// CELO,
-	LUKSO,
+	// LUKSO,
 };
 
 export const additionalSheets = {

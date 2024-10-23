@@ -109,7 +109,7 @@ export const loadBlock = async (ticker, hash, retries = 0) => {
 
 	if (retries > 1) return false;
 	if (retries) return loadBlockCloudFlare(ticker, hash);
-
+	if (hash == undefined) return;
 	let fileUrl = `${process.env.VUE_APP_REST_API}/static/blocks/${ticker}/${hash}`;
 
 	try {

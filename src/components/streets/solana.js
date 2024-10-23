@@ -140,7 +140,7 @@ export default class SOLANAStreet extends Street {
 			position: "center",
 		});
 
-		this.vue.busFeeTitle = "Gwei";
+		this.vue.busFeeTitle = "LAM";
 		(this.vue.busFeeTitleLong = () => {
 			return "Tip Price (Gwei)";
 		}),
