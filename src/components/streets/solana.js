@@ -643,8 +643,8 @@ export default class SOLANAStreet extends Street {
 				activeBuses[i].resize(overTarget > 0 ? Math.round(overTarget / 500000) : 0);
 				continue;
 			}
-			// activeBuses[i].bye();
-			// activeBuses.splice(i, 1);
+		activeBuses[i].leave();
+		activeBuses.splice(i, 1);
 		}
 
 		const notDeleted = hashArray.filter((obj) => !obj.txData.deleted).length;
@@ -668,9 +668,10 @@ export default class SOLANAStreet extends Street {
 		return 0; //TODO maybe do dynamic, but block size is so small that it would show as 0 all the time
 	}
 
-	calcBusHeightFromBlock(block) {
-		let target = this.getGasTarget();
-		let overTarget = block.gu - target;
+	calcBusHeightFromBlock(/*block*/) {
+		// let target = this.getGasTarget();
+		// let overTarget = block.gu - target;
+		let overTarget = -1;
 		if (overTarget < 0) overTarget = 0;
 		return overTarget > 0 ? Math.round(overTarget / 500000) : 0;
 	}
