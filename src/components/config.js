@@ -1016,8 +1016,8 @@ export const ETH = {
 export const SOLANA = {
 	ticker: "SOLANA",
 	coinName: "SOLANA",
-	color: "000000",
-	busColor: "000000",
+	color: "14F195",
+	busColor: "9945FF",
 	busCapacity: 0,
 	feeVar: "gp",
 	explorerTxUrl: "https://explorer.consensus.mainnet.sol.network/tx/",

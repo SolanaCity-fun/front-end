@@ -62,8 +62,9 @@ export default {
         searchBlock: function(query){
             for (let i = 0; i < this.street.blockchain.length; i++) {
                 const block = this.street.blockchain[i];
-                if(block.height==query){
-                    this.$root.blockWindow(block.height);
+                const blockMeasure = block.coin === "SOLANA" ? block.slot : block.height
+                if(blockMeasure==query){
+                    this.$root.blockWindow(blockMeasure);
                     this.icon = "check";
                     return true;
                 }
@@ -71,6 +72,7 @@ export default {
             for (let i = 0; i < this.street.buses.children.entries.length; i++) {
                 const bus = this.street.buses.children.entries[i];
                 const height = bus.getData('id');
+                // console.log(height)
                 if(height==query){
                     this.$root.blockWindow(height);
                     this.icon = "check";
@@ -78,8 +80,10 @@ export default {
                 }
             }
 
+
             const result = this.street.apiBlock(query);
             return result.then(res => {
+                // console.log("res",res)
                 if(res){
                     //set the blockhash so api loaded block txs are confirmed
                     this.$root.blockWindow(res);
