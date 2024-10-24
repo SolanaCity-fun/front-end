@@ -63,7 +63,39 @@ const Bus = new Phaser.Class({
 				this.text3.setOrigin(0.5);
 				this.lightsSprite = [];
 				this.lightsSprite[0] = this.scene.add.image(1, 107 + this.busHeight - 80, getSheetKey("lights.png"), "lights.png");
+
+				this.logo = this.scene.add.image(0, -35, getSheetKey("coin_logo"), this.scene.ticker.toLowerCase() + ".png");
+				this.logo.setScale(0.6);
+				this.logo.setTint(this.logoColor.color);
+				this.logo.originalTint = this.logoColor.color;
+				this.logo.setOrigin(0.5, 0);
 	
+		}
+		else if(this.scene.config.ticker == "SOLANA"){
+			this.busTopSprite = this.scene.add.image(5, -97, "solbtop").setScale(1.8);
+				this.busBottomSprite = this.scene.add.image(1, this.busHeight - 18, "solbb").setScale(1.8);
+				//this.ethBusRoof = this.scene.add.image(3, this.busHeight - 10, "ethroof").setScale(1.8).setDepth(1001);
+				this.doorSprite = this.scene.add.image(52, -80, "ethdoorTop").setScale(1.8,2.2).setVisible(false);
+				this.backDoorSprite = this.scene.add.image(52, 45 + this.busHeight - 80, "ethdoorback").setScale(1.8).setVisible(false);
+				this.busMiddle = this.scene.add.rectangle(0, -59, 120, this.busHeight, "0x" + this.scene.config.busColor, 1);
+				this.busMiddle.setVisible(false);
+				this.text1 = this.scene.add.bitmapText(0, -91, "roboto", "" + this.getData("id"), 19);
+			
+				this.text1.setOrigin(0.5);
+				this.text2 = this.scene.add.bitmapText(0, -69, "roboto", "", 24);
+			
+				this.text2.setOrigin(0.5);
+				this.text3 = this.scene.add.bitmapText(0, -48, "roboto", "", 19);
+				
+				this.text3.setOrigin(0.5);
+				this.lightsSprite = [];
+				this.lightsSprite[0] = this.scene.add.image(1, 107 + this.busHeight - 80, getSheetKey("lights.png"), "lights.png");
+
+				this.logo = this.scene.add.image(0, -25, getSheetKey("coin_logo"), this.scene.ticker.toLowerCase() + ".png");
+				this.logo.setScale(1);
+				this.logo.originalTint = this.logoColor.color;
+				this.logo.setOrigin(0.5, 0);
+
 		}else{
 			this.busTopSprite = this.scene.add.image(0, -87, getSheetKey("bus_top.png"), "bus_top.png");
 			this.busBottomSprite = this.scene.add.image(0, this.busHeight - 10, getSheetKey("bus_bottom.png"), "bus_bottom.png");
@@ -88,6 +120,12 @@ const Bus = new Phaser.Class({
 		this.text3.setOrigin(0.5);
 		this.lightsSprite = [];
 		this.lightsSprite[0] = this.scene.add.image(0, 107 + this.busHeight - 80, getSheetKey("lights.png"), "lights.png");
+
+		this.logo = this.scene.add.image(0, -35, getSheetKey("coin_logo"), this.scene.ticker.toLowerCase() + ".png");
+		this.logo.setScale(0.6);
+		this.logo.setTint(this.logoColor.color);
+		this.logo.originalTint = this.logoColor.color;
+		this.logo.setOrigin(0.5, 0);
 	
 		}
 	
@@ -98,16 +136,12 @@ const Bus = new Phaser.Class({
 		this.busMiddle.setOrigin(0.5, 0);
 		
 
-		this.logo = this.scene.add.image(0, -35, getSheetKey("coin_logo"), this.scene.ticker.toLowerCase() + ".png");
-		this.logo.setScale(0.6);
-		this.logo.setTint(this.logoColor.color);
-		this.logo.originalTint = this.logoColor.color;
-		this.logo.setOrigin(0.5, 0);
+	
 
 		
 		if (this.scene.side !== "right") {
 			
-			if(this.scene.config.ticker == "ETH"){
+			if(this.scene.config.ticker == "ETH" || this.scene.config.ticker == "SOLANA"){
 				this.busTopSprite.setFlipX(true);
 				this.busTopSprite.x = -3;
 				this.busBottomSprite.setFlipX(true);
@@ -154,7 +188,7 @@ const Bus = new Phaser.Class({
 			this.backDoorSprite,
 		];
 		this.fillObjects = [this.busMiddle];
-		if(this.scene.config.ticker == "ETH"){
+		if(this.scene.config.ticker == "ETH" || this.scene.config.ticker == "SOLANA"){
 			this.busFloor = this.scene.add.rectangle(
 				this.scene.side === "right" ? this.x + toRes(53) : this.x - toRes(60),
 				this.y - toRes(100),
@@ -269,6 +303,7 @@ Bus.prototype.newBus = function (atStop = true) {
 	this.busFloor.displayHeight = toRes(this.busHeight + 90);
 
 	this.busBottomSprite.y = this.busHeight - 10;
+	if(this.scene.config.ticker == "SOLANA")this.busBottomSprite.y = this.busHeight-1;
 	this.lightsSprite[0].y = 107 + this.busHeight - 80;
 	this.backDoorSprite.y = 45 + this.busHeight - 80;
 
@@ -377,7 +412,7 @@ Bus.prototype.switchSide = function (newSide) {
 	
 	if (newSide !== "right") {
 			
-		if(this.scene.config.ticker == "ETH"){
+		if(this.scene.config.ticker == "ETH" || this.scene.config.ticker == "SOLANA"){
 			this.busTopSprite.setFlipX(true);
 			this.busTopSprite.x = -3;
 			this.busBottomSprite.setFlipX(true);
@@ -390,7 +425,7 @@ Bus.prototype.switchSide = function (newSide) {
 		}
 		
 	}else{
-		if(this.scene.config.ticker == "ETH"){
+		if(this.scene.config.ticker == "ETH" || this.scene.config.ticker == "SOLANA"){
 		this.busTopSprite.setFlipX(false);
 		this.busTopSprite.x = 5;
 		this.busBottomSprite.setFlipX(false);
@@ -414,8 +449,11 @@ Bus.prototype.positionLogo = function () {
 		let newScale = (this.busHeight + 30) / 100;
 		if (newScale > 0.6) newScale = 0.6;
 		this.logo.setScale(newScale);
+		if(this.scene.config.ticker == "SOLANA")this.logo.setScale(0.68);
+
 	} else {
 		this.logo.setScale(0.6);
+		if(this.scene.config.ticker == "SOLANA")this.logo.setScale(0.68);
 	}
 };
 
@@ -691,7 +729,7 @@ Bus.prototype.moveLength = function (value, callback, duration = 1000, moveBelow
 };
 
 Bus.prototype.boardingY = function () {
-	if(this.scene.config.ticker == "ETH"){return this.busTopSprite.getTopLeft(null, true).y + this.scene.busDoorFromTop+toRes(35);}else{
+	if(this.scene.config.ticker == "ETH" || this.scene.config.ticker == "SOLANA"){return this.busTopSprite.getTopLeft(null, true).y + this.scene.busDoorFromTop+toRes(35);}else{
 		return this.busTopSprite.getTopLeft(null, true).y + this.scene.busDoorFromTop;
 	}
 	
@@ -755,11 +793,13 @@ Bus.prototype.doorClose = function () {
 		if (person.getData("boarding") == this.getData("id")) return false;
 	}
 	this.doorSprite.setVisible(true);
+	if(this.scene.config.ticker == "SOLANA")this.doorSprite.setVisible(false);
 	return true;
 };
 
 Bus.prototype.backDoorClose = function () {
 	this.backDoorSprite.setVisible(true);
+	if(this.scene.config.ticker == "SOLANA")this.backDoorSprite.setVisible(false);
 };
 
 Bus.prototype.createInside = function (redraw = false) {

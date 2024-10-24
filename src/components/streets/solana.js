@@ -3,7 +3,7 @@ import Phaser from "phaser";
 // import { toRes, ethNewTxSetDepending } from "../utils/";
 import { mirrorX, getSheetKey } from "../utils/";
 import { toRes, ethNewTxSetDepending } from "../utils/";
-import { SOLANA, ethUnits } from "../config.js";
+import { SOLANA, ethUnits,solUnits } from "../config.js";
 import i18n from "../../i18n";
 import eventHub from "../vue/eventHub.js";
 import state from "../../wallet";
@@ -43,7 +43,7 @@ export default class SOLANAStreet extends Street {
 					return "Max " + i18n.t(this.ticker.toLowerCase() + ".gp"); //TODO change to max gas price
 				},
 				format: (val) => {
-					return ethUnits(val);
+					return solUnits(val);
 				},
 				key: "feeVal",
 			},
@@ -52,7 +52,7 @@ export default class SOLANAStreet extends Street {
 					return i18n.t(this.ticker.toLowerCase() + ".mpfpg"); //TODO change to max gas price
 				},
 				format: (val) => {
-					return ethUnits(val);
+					return solUnits(val);
 				},
 				key: "mpfpg",
 			},
@@ -497,7 +497,7 @@ export default class SOLANAStreet extends Street {
 				continue;
 			}
 			bus.baseFee = this.calcBusBaseFee(activeBuses, i);
-			bus.feeText = ethUnits(bus.baseFee, true, true);
+			bus.feeText = solUnits(bus.baseFee, true, true);
 			// to enable visualistion of bridge transaction currently a test and should be more dyanmic if block has bridge transaction
 			if (this.bridgeTx.length >= 1) {
 				bus.bridgTxs.push(...this.bridgeTx);
@@ -551,7 +551,7 @@ export default class SOLANAStreet extends Street {
 		let target = this.getGasTarget();
 		for (let i = activeBuses.length - 1; i >= 0; i--) {
 			this.calcBusFees(activeBuses, i);
-			activeBuses[i].feeText2 = "+" + ethUnits(Math.ceil(activeBuses[i].lowFee) * 1000000000);
+			activeBuses[i].feeText2 = "+" + solUnits(Math.ceil(activeBuses[i].lowFee) * 1000000000);
 			let busId = activeBuses[i].getData("id");
 			if (foundLoaded || nonEmptyBuses.includes(busId) || activeBuses[i].tx.length > 0) {
 				foundLoaded = true;

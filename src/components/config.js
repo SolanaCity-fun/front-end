@@ -24,6 +24,29 @@ export const ethUnits = (wei, readable = true, round = false) => {
 	else return val;
 };
 
+
+export const solUnits = (lam, readable = true, round = false) => {
+	let val = lam;
+	let units = "Lam";
+	if (val > 100000000) {
+		units = "GLam";
+		val = val / 1000000000;
+	} else if (val > 100000) {
+		units = "MLam";
+		val = val / 1000000;
+	} else if (val > 100) {
+		units = "KLam";
+		val = val / 1000;
+	}
+	if (round && !isNaN(val)) val = Math.round(val);
+	val = val.toLocaleString(i18n.locale, {
+		maximumFractionDigits: 1,
+		minimumFractionDigits: 0,
+	});
+	if (readable) return val + " " + units;
+	else return val;
+};
+
 export const generalCalcBlockFeeArray = (data, ticker) => {
 	if (!data.feeArray && data.txFull) {
 		data.lowFee = Math.pow(10, 36);
