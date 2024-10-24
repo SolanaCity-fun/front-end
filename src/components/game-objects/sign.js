@@ -340,6 +340,11 @@ export default class Sign extends Phaser.GameObjects.Container {
 			this.fitTextToSign(this.middleText);
 		}
 		let displayedValue = calcStatValue(stat);
+
+		if (this.scene.ticker === "SOLANA") {
+			displayedValue = "~$0.00085 USD";
+		}
+
 		if (this.bottomText.text != displayedValue) {
 			this.bottomText.setText(displayedValue);
 			this.fitTextToSign(this.bottomText);
